@@ -8,6 +8,9 @@ public class JobRequirements {
     private int minExperience; // In years
     private String educationLevel;
 
+
+
+
     // Constructor, getters, setters
     public JobRequirements(List<String> requiredSkills, int minExperience, String educationLevel) {
         this.requiredSkills = requiredSkills;

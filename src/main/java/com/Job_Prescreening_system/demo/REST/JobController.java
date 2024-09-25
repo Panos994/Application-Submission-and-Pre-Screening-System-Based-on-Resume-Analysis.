@@ -4,23 +4,18 @@ import com.Job_Prescreening_system.demo.Entities.Application;
 import com.Job_Prescreening_system.demo.Entities.Job;
 import com.Job_Prescreening_system.demo.Services.*;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.tika.exception.TikaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/jobs")
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = "http://localhost:8081")
 public class JobController {
-
-
-
 
     @Autowired
     private ResumeParsingService resumeParsingService;
@@ -31,22 +26,27 @@ public class JobController {
     @Autowired
     private ScoringService scoringService;
 
-
     @Autowired
     private ApplicationService applicationService;
 
     @Autowired
     private JobService jobService;
 
-
+    // Apply for a job
     @PostMapping("/apply")
-    public ResponseEntity<String> applyForJob(@RequestParam("resume") MultipartFile resumeFile, @RequestParam("jobId") Long jobId) {
+    public ResponseEntity<String> applyForJob(
+            @RequestParam("resume") MultipartFile resumeFile,
+            @RequestParam("jobId") Long jobId) {
         try {
             // Parse the resume
             String parsedResume = resumeParsingService.parseResume(resumeFile);
 
             // Get the job by its ID
             Job job = jobService.getJobById(jobId);
+            if (job == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Job not found.");
+            }
+
             JobRequirements jobRequirements = new JobRequirements(
                     List.of(job.getRequiredSkills().split(",")),
                     job.getMinExperience(),
@@ -54,7 +54,7 @@ public class JobController {
             );
 
             // Calculate match score
-            double matchScore = scoringService.calculateMatchScore(parsedResume, jobRequirements);
+            double matchScore = scoringService.calculateMatchScore(parsedResume, jobRequirements, job);
 
             // Save the application with the score
             Application application = new Application();
@@ -69,11 +69,12 @@ public class JobController {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to parse resume: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-
-    // Endpoint to get a specific job by ID
+    // Get a specific job by ID
     @GetMapping("/{id}")
     public ResponseEntity<Job> getJobById(@PathVariable Long id) {
         try {
@@ -84,25 +85,13 @@ public class JobController {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-    // Create a new job (only accessible to authenticated users, maybe only ADMIN)
+    // Create a new job (only accessible to ADMIN)
     @PostMapping("/create")
     public ResponseEntity<?> createJob(@RequestBody Job job) {
         try {
             Job savedJob = jobService.saveJob(job);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedJob);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error creating job: " + e.getMessage());
         }
     }
@@ -117,7 +106,7 @@ public class JobController {
         return ResponseEntity.ok(jobs);
     }
 
-
+    // Fetch all jobs with top applications
     @GetMapping("/topApplication")
     public ResponseEntity<List<Job>> getAllTopJobs() {
         List<Job> jobs = jobService.getAllJobsWithTopApplications();
@@ -127,30 +116,20 @@ public class JobController {
         return ResponseEntity.ok(jobs);
     }
 
-    // Update job by ID (only accessible to authenticated users, maybe only ADMIN)
+    // Update job by ID (only accessible to ADMIN)
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateJob(@PathVariable Long id, @RequestBody Job job) {
         try {
             Job updatedJob = jobService.updateJob(id, job);
-            if (updatedJob != null) {
-                return ResponseEntity.ok(updatedJob);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Job with ID " + id + " not found.");
-            }
+            return ResponseEntity.ok(updatedJob);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Job with ID " + id + " not found.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error updating job: " + e.getMessage());
         }
     }
 
-
-
-
-
-
-
-
-
-
+    // Export jobs to Excel
     @Autowired
     private ExcelExportService excelExportService;
 

@@ -29,14 +29,53 @@ public class Job {
 
     private String topCvFileNames;
 
+    // Criteria weights
+    @Column(nullable = false)
+    private Double minExperienceWeight;
+
+    @Column(nullable = false)
+    private Double educationWeight;
+
+    @Column(nullable = false)
+    private Double skillsWeight;
+
+
+    public void setMinExperience(Integer minExperience) {
+        this.minExperience = minExperience;
+    }
+
+    public Double getMinExperienceWeight() {
+        return minExperienceWeight;
+    }
+
+    public void setMinExperienceWeight(Double minExperienceWeight) {
+        this.minExperienceWeight = minExperienceWeight;
+    }
+
+    public Double getEducationWeight() {
+        return educationWeight;
+    }
+
+    public void setEducationWeight(Double educationWeight) {
+        this.educationWeight = educationWeight;
+    }
+
+    public Double getSkillsWeight() {
+        return skillsWeight;
+    }
+
+    public void setSkillsWeight(Double skillsWeight) {
+        this.skillsWeight = skillsWeight;
+    }
+
     // Getters and setters
     public Double getTopMatchScore() {
         return topMatchScore;
     }
 
     //public String getTopCvFileNames() {
-      //  return topCvFileNames;
-  //  }
+    //  return topCvFileNames;
+    //  }
 
     public String getTopCvFileNames() {
         if (this.topCvFileNames != null && !this.topCvFileNames.isEmpty()) {

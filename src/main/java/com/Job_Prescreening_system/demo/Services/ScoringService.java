@@ -1,34 +1,41 @@
 package com.Job_Prescreening_system.demo.Services;
 
 import com.Job_Prescreening_system.demo.Entities.Job;
-import com.Job_Prescreening_system.demo.Repositories.JobRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.Job_Prescreening_system.demo.Services.JobRequirements;
+import java.util.List;
+
 @Service
 public class ScoringService {
 
-    public int calculateMatchScore(String parsedResume, JobRequirements jobRequirements) {
-        int score = 0;
+    public double calculateMatchScore(String parsedResume, JobRequirements jobRequirements, Job job) {
+        double experienceScore = calculateExperienceScore(parsedResume, jobRequirements.getMinExperience(), job.getMinExperienceWeight());
+        double educationScore = calculateEducationScore(parsedResume, jobRequirements.getEducationLevel(), job.getEducationWeight());
+        double skillsScore = calculateSkillsScore(parsedResume, jobRequirements.getRequiredSkills(), job.getSkillsWeight());
 
-        // Check for skills match
-        for (String skill : jobRequirements.getRequiredSkills()) {
-            if (parsedResume.toLowerCase().contains(skill.toLowerCase())) {
-                score += 10; // +10 points for each matched skill
-            }
-        }
-
-        // Check for experience
-        if (parsedResume.contains(jobRequirements.getMinExperience() + " years")) {
-            score += 20;
-        }
-
-        // Check for education level
-        if (parsedResume.toLowerCase().contains(jobRequirements.getEducationLevel().toLowerCase())) {
-            score += 15;
-        }
-
-        return score;
+        return experienceScore + educationScore + skillsScore;
     }
 
+    private double calculateExperienceScore(String parsedResume, int minExperience, double weight) {
+        boolean matches = parsedResume.contains(minExperience + " years");
+        return matches ? weight : 0; // Full weight if matched
+    }
+
+    private double calculateEducationScore(String parsedResume, String educationLevel, double weight) {
+        boolean matches = parsedResume.toLowerCase().contains(educationLevel.toLowerCase());
+        return matches ? weight : 0; // Full weight if matched
+    }
+
+    private double calculateSkillsScore(String parsedResume, List<String> requiredSkills, double weight) {
+        double matchedSkills = 0;
+        for (String skill : requiredSkills) {
+            if (parsedResume.toLowerCase().contains(skill.toLowerCase())) {
+                matchedSkills += 1;
+            }
+        }
+        if (requiredSkills.isEmpty()) {
+            return 0;
+        }
+        double skillScore = (matchedSkills / requiredSkills.size()) * weight;
+        return skillScore;
+    }
 }

@@ -4,7 +4,9 @@
 
     <label for="jobSelect">Select a Job:</label>
     <select v-model="selectedJobId">
-      <option v-for="job in jobs" :key="job.id" :value="job.id">{{ job.title }}</option>
+      <option v-for="job in jobs" :key="job.id" :value="job.id">
+        {{ job.title }}
+      </option>
     </select>
 
     <input type="file" @change="handleFileUpload" />
@@ -24,7 +26,7 @@ export default {
     return {
       resumeFile: null,
       selectedJobId: null,
-      jobs: [], // Ensure you fetch jobs here as well
+      jobs: [],
       scoreMessage: ''
     };
   },
@@ -33,32 +35,47 @@ export default {
       this.resumeFile = event.target.files[0];
     },
     async submitResume() {
+      if (!this.resumeFile || !this.selectedJobId) {
+        alert('Please select a job and upload your resume.');
+        return;
+      }
+
       const formData = new FormData();
       formData.append('resume', this.resumeFile);
       formData.append('jobId', this.selectedJobId);
 
-      // Retrieve the token from localStorage
+      // Log FormData contents
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
+
       const authToken = localStorage.getItem('authToken');
       console.log('Token:', authToken);
 
-      axios.post('http://localhost:9090/api/jobs/apply', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${authToken}` // Add Authorization header
+      try {
+        const response = await axios.post('http://localhost:9090/api/jobs/apply', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        this.scoreMessage = response.data;
+        // Reset form
+        this.selectedJobId = null;
+        this.resumeFile = null;
+      } catch (error) {
+        console.error('Error applying for job:', error);
+        if (error.response) {
+          alert(`Error: ${error.response.data}`);
+        } else {
+          alert('An error occurred while applying for the job.');
         }
-      })
-          .then(response => {
-            this.scoreMessage = response.data;
-          })
-          .catch(error => {
-            console.error('Error applying for job:', error);
-            alert('An error occurred while applying for the job.');
-          });
+      }
     },
     async fetchJobs() {
       try {
         const authToken = localStorage.getItem('authToken');
-        const response = await axios.get('http://localhost:9090/api/jobs', {
+        const response = await axios.get('http://localhost:9090/api/jobs/topApplication', {
           headers: {
             'Authorization': `Bearer ${authToken}`
           }

@@ -4,24 +4,16 @@ import com.Job_Prescreening_system.demo.Entities.Application;
 import com.Job_Prescreening_system.demo.Entities.Job;
 import com.Job_Prescreening_system.demo.Repositories.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 
 @Service
 public class JobService {
 
     @Autowired
     private JobRepository jobRepository;
-
-
-
-
 
     @Autowired
     private ApplicationService applicationService;
@@ -33,12 +25,10 @@ public class JobService {
         for (Job job : jobs) {
             List<Application> topApplications = applicationService.getTopApplicationsByJobId(job.getId());
 
-            // Get the top score from the list of top applications
             if (!topApplications.isEmpty()) {
                 double topScore = topApplications.get(0).getMatchScore();
                 job.setTopMatchScore(topScore);
 
-                // Combine all CV file names with the top score
                 List<String> topCvFileNames = topApplications.stream()
                         .map(Application::getCvFileName)
                         .collect(Collectors.toList());
@@ -49,14 +39,15 @@ public class JobService {
         return jobs;
     }
 
-
-    // Save a new job
+    // Save a new job with weight validation
     public Job saveJob(Job job) {
-        try {
-            return jobRepository.save(job);
-        } catch (Exception e) {
-            throw new RuntimeException("Error saving job: " + e.getMessage());
+        double totalWeight = job.getMinExperienceWeight() + job.getEducationWeight() + job.getSkillsWeight();
+
+        if (Math.abs(totalWeight - 100.0) > 0.0001) { // Allowing a tiny margin for floating-point arithmetic
+            throw new RuntimeException("Total weight must equal 100%.");
         }
+
+        return jobRepository.save(job);
     }
 
     // Get all jobs
@@ -64,35 +55,38 @@ public class JobService {
         return jobRepository.findAll();
     }
 
-    // Update an existing job
+    // Update an existing job with weight validation
     public Job updateJob(Long id, Job job) {
-        Optional<Job> existingJob = jobRepository.findById(id);
-        if (existingJob.isPresent()) {
-            Job updatedJob = existingJob.get();
-            updatedJob.setTitle(job.getTitle());
-            updatedJob.setDescription(job.getDescription());
-            updatedJob.setRequiredSkills(job.getRequiredSkills());
-            updatedJob.setMinExperience(job.getMinExperience());
-            updatedJob.setEducationLevel(job.getEducationLevel());
-            return jobRepository.save(updatedJob);
+        Optional<Job> existingJobOpt = jobRepository.findById(id);
+        if (existingJobOpt.isPresent()) {
+            Job existingJob = existingJobOpt.get();
+            existingJob.setTitle(job.getTitle());
+            existingJob.setDescription(job.getDescription());
+            existingJob.setRequiredSkills(job.getRequiredSkills());
+            existingJob.setMinExperience(job.getMinExperience());
+            existingJob.setEducationLevel(job.getEducationLevel());
+            existingJob.setMinExperienceWeight(job.getMinExperienceWeight());
+            existingJob.setEducationWeight(job.getEducationWeight());
+            existingJob.setSkillsWeight(job.getSkillsWeight());
+
+            double totalWeight = existingJob.getMinExperienceWeight() + existingJob.getEducationWeight() + existingJob.getSkillsWeight();
+            if (Math.abs(totalWeight - 100.0) > 0.0001) {
+                throw new RuntimeException("Total weight must equal 100%.");
+            }
+
+            return jobRepository.save(existingJob);
         } else {
             throw new RuntimeException("Job with ID " + id + " not found.");
         }
     }
 
-
-
-
-
-
-
+    // Get job by ID
     public Job getJobById(Long id) {
-        Optional<Job> job = jobRepository.findById(id);
-        if (job.isPresent()) {
-            return job.get();
+        Optional<Job> jobOpt = jobRepository.findById(id);
+        if (jobOpt.isPresent()) {
+            return jobOpt.get();
         } else {
             throw new RuntimeException("Job with ID " + id + " not found.");
         }
     }
-
 }
