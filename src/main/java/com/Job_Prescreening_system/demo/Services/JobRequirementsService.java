@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 @Service
 public class JobRequirementsService {
-        //for testing purposes
+    //for testing purposes
     public JobRequirements getJobRequirements() {
         return new JobRequirements(
                 Arrays.asList("Java", "Spring Boot", "Microservices"), // Skills required for the job

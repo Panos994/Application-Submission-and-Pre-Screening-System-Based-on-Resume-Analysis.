@@ -44,13 +44,7 @@ export default {
       formData.append('resume', this.resumeFile);
       formData.append('jobId', this.selectedJobId);
 
-      // Log FormData contents
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-      }
-
       const authToken = localStorage.getItem('authToken');
-      console.log('Token:', authToken);
 
       try {
         const response = await axios.post('http://localhost:9090/api/jobs/apply', formData, {
@@ -59,10 +53,20 @@ export default {
             'Authorization': `Bearer ${authToken}`
           }
         });
-        this.scoreMessage = response.data;
-        // Reset form
-        this.selectedJobId = null;
-        this.resumeFile = null;
+
+        // Extract the number from the response string
+        const regex = /(\d+(\.\d+)?)/; // Matches a number with optional decimals
+        const match = response.data.match(regex);
+
+        if (match) {
+          const score = parseFloat(match[0]).toFixed(2); // Round to 2 decimal places
+          this.scoreMessage = `Your resume scored: ${score} points!`;
+        } else {
+          this.scoreMessage = response.data; // Fallback to original message if no number is found
+        }
+
+        // Call resetForm to clear the form
+        this.resetForm();
       } catch (error) {
         console.error('Error applying for job:', error);
         if (error.response) {
@@ -84,6 +88,11 @@ export default {
       } catch (error) {
         console.error('Error fetching jobs:', error);
       }
+    },
+    resetForm() {
+      // Reset form data
+      this.selectedJobId = null;
+      this.resumeFile = null;
     }
   },
   mounted() {

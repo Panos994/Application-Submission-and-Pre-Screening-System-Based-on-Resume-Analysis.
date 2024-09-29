@@ -1,6 +1,8 @@
 package com.Job_Prescreening_system.demo.Services;
 
 
+import jakarta.persistence.Column;
+
 import java.util.List;
 
 public class JobRequirements {
@@ -29,4 +31,8 @@ public class JobRequirements {
     public String getEducationLevel() {
         return educationLevel;
     }
+
+
+
+
 }

@@ -161,4 +161,30 @@ public class Job {
     public void setApplications(Set<Application> applications) {
         this.applications = applications;
     }
+
+
+    private String institutionType;
+
+    private String universityPreference;
+
+
+    // Getters and setters for new fields
+    public String getInstitutionType() {
+        return institutionType;
+    }
+
+    public void setInstitutionType(String institutionType) {
+        this.institutionType = institutionType;
+    }
+
+
+    // Add getter and setter for universityPreference
+    public String getUniversityPreference() {
+        return universityPreference;
+    }
+
+    public void setUniversityPreference(String universityPreference) {
+        this.universityPreference = universityPreference;
+    }
+
 }
