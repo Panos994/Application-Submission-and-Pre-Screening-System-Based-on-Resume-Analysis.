@@ -1,7 +1,3 @@
-2
-
-
-
 <template>
   <div>
     <h1>Manage Job Requirements</h1>
