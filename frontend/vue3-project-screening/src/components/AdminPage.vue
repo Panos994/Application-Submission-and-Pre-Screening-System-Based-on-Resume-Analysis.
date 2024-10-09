@@ -1,3 +1,4 @@
+<!-- adminEmployee page of post jobs -->
 <template>
   <div>
     <h1>Manage Job Requirements</h1>
@@ -113,8 +114,11 @@
         <strong>Highest Score:</strong> {{ job.topMatchScore || 'N/A' }} -
         <strong>CV Files:</strong> {{ job.topCvFileNames || 'N/A' }}
       </li>
-      <br><br>
+      <br>
       <button @click="exportToExcel">Export to Excel</button>
+
+      <br><br><br>
+      <router-link to="/adminUserManagement">Go to Admin Page</router-link>
     </ul>
   </div>
 </template>

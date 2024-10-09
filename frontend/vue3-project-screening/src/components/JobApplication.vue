@@ -26,13 +26,13 @@
 
 
 
-    <h3>AI Response Data:</h3>
+    <h3>Agent Smith Response:</h3>
     <pre v-if="aiResponseData">{{ aiResponseData }}</pre>
 
 
 
     <br><br>
-    <router-link to="/admin">Go to Admin Page</router-link>
+    <router-link to="/admin">Go to Employee Page</router-link>
   </div>
 </template>
 

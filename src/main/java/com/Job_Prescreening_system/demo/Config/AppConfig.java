@@ -28,8 +28,8 @@ public class AppConfig {
                         addList("Bearer Authentication"))
                 .components(new Components().addSecuritySchemes
                         ("Bearer Authentication", createAPIKeyScheme()))
-                .info(new Info().title("DS LAB 2023 REST API")
-                        .description("This API is used in dl-lab-2023 project")
+                .info(new Info().title("Dissertation - it2021154 - 2024-2025 REST API")
+                        .description("This API is used in Panagiotis Foteinopoulos Dissertation")
                         .version("1.0").contact(new Contact().name("Panagiotis Foteinopoulos")
                                 .email("it2021154@hua.gr").url("https://github.com/Panos994"))
                         .license(new License().name("License of API")

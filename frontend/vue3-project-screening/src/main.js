@@ -9,7 +9,8 @@ import HomePage from './views/HomePage.vue';
 import JobApplication from './components/JobApplication.vue';
 import LoginPage from './components/LoginPage.vue';
 import SignUpPage from './components/SignUpPage.vue';
-import AdminPage from './components/AdminPage.vue'; // Import AdminPage
+import AdminPage from './components/AdminPage.vue';
+import AdminUserManagement from "@/components/AdminUserManagement.vue"; // Import AdminPage
 
 // Set base URL for Axios
 axios.defaults.baseURL = 'http://localhost:9090';
@@ -20,7 +21,11 @@ const routes = [
     { path: '/job-application', name: 'JobApplication', component: JobApplication },
     { path: '/login', name: 'LoginPage', component: LoginPage },
     { path: '/signup', name: 'SignUpPage', component: SignUpPage },
-    { path: '/admin', name: 'AdminPage', component: AdminPage } // Add route for AdminPage
+    { path: '/admin', name: 'AdminPage', component: AdminPage }, // Add route for AdminPage
+
+    { path: '/adminUserManagement', name: 'AdminUserManagement', component: AdminUserManagement }
+
+
 ];
 
 // Create router instance

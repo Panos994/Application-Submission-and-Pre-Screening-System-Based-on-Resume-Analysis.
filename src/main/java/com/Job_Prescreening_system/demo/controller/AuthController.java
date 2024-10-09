@@ -68,6 +68,11 @@ public class AuthController {
             return null;
         });
 
+        roleRepository.findByName("ROLE_MODERATOR").orElseGet(() -> {
+            roleRepository.save(new role("ROLE_MODERATOR"));
+            return null;
+        });
+
 
     }
 
