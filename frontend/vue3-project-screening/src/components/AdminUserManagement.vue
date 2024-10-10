@@ -1,7 +1,7 @@
-<!-- working in the backend tested in swagger not working in the frontend ! checkin in this endpoint /adminUserManagement-->
+<!-- Admin Page for User Management-->
 <template>
   <div>
-    <h1>Admin User Management</h1>
+    <h1> User Management</h1>
 
     <!-- Displaying users -->
     <table>
@@ -34,6 +34,8 @@
       </tbody>
     </table>
   </div>
+
+  <router-link to="/">Go to Homepage</router-link>
 </template>
 
 <script>

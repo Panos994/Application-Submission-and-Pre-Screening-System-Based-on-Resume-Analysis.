@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class JobController {
     private JobService jobService;
 
     // Apply for a job
+    @Secured("ROLE_USER")
     @PostMapping("/apply")
     public ResponseEntity<String> applyForJob(
             @RequestParam("resume") MultipartFile resumeFile,
@@ -74,7 +76,10 @@ public class JobController {
         }
     }
 
+
+
     // Get a specific job by ID
+    @Secured("ROLE_MODERATOR")
     @GetMapping("/{id}")
     public ResponseEntity<Job> getJobById(@PathVariable Long id) {
         try {
@@ -85,7 +90,8 @@ public class JobController {
         }
     }
 
-    // Create a new job (only accessible to ADMIN)
+    // Create a new job (only accessible to employee)
+    @Secured("ROLE_MODERATOR")
     @PostMapping("/create")
     public ResponseEntity<?> createJob(@RequestBody Job job) {
         try {
@@ -97,6 +103,7 @@ public class JobController {
     }
 
     // Fetch all jobs
+
     @GetMapping
     public ResponseEntity<List<Job>> getAllJobs() {
         List<Job> jobs = jobService.getAllJobs();
@@ -107,6 +114,7 @@ public class JobController {
     }
 
     // Fetch all jobs with top applications
+
     @GetMapping("/topApplication")
     public ResponseEntity<List<Job>> getAllTopJobs() {
         List<Job> jobs = jobService.getAllJobsWithTopApplications();
@@ -117,6 +125,7 @@ public class JobController {
     }
 
     // Update job by ID (only accessible to ADMIN)
+    @Secured("ROLE_MODERATOR")
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateJob(@PathVariable Long id, @RequestBody Job job) {
         try {
@@ -132,7 +141,7 @@ public class JobController {
     // Export jobs to Excel
     @Autowired
     private ExcelExportService excelExportService;
-
+    @Secured("ROLE_MODERATOR")
     @GetMapping("/export")
     public void exportJobsToExcel(HttpServletResponse response) throws IOException {
         List<Job> jobs = jobService.getAllJobsWithTopApplications();  // Or any other method to fetch jobs

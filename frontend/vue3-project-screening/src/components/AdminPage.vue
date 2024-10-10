@@ -1,4 +1,4 @@
-<!-- adminEmployee page of post jobs -->
+<!-- Employee page for posting jobs -->
 <template>
   <div>
     <h1>Manage Job Requirements</h1>
@@ -118,7 +118,7 @@
       <button @click="exportToExcel">Export to Excel</button>
 
       <br><br><br>
-      <router-link to="/adminUserManagement">Go to Admin Page</router-link>
+      <router-link to="/">Go to our Homepage</router-link>
     </ul>
   </div>
 </template>

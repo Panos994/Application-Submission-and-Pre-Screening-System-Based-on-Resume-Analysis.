@@ -1,9 +1,11 @@
+<!-- LoginPage.vue -->
+
 <template>
   <div class="auth-form">
     <h2>Login</h2>
     <form @submit.prevent="login">
       <label for="username">Username:</label>
-      <input type="username" v-model="username" required />
+      <input type="text" v-model="username" required />
 
       <label for="password">Password:</label>
       <input type="password" v-model="password" required />
@@ -11,6 +13,7 @@
       <button type="submit">Login</button>
     </form>
     <p>Don't have an account? <router-link to="/signup">Sign up here</router-link></p>
+    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
   </div>
 </template>
 
@@ -22,7 +25,8 @@ export default {
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
+      errorMessage: ''
     };
   },
   methods: {
@@ -33,21 +37,31 @@ export default {
           password: this.password
         });
 
-        // Log the response to check if the accessToken is received
+        // Log the response to check the token and roles
         console.log('Login response:', response.data);
 
-        // Store auth token in localStorage
-        if (response.data.accessToken) {
-          localStorage.setItem('authToken', response.data.accessToken);
-          console.log('Token stored:', response.data.accessToken);
+        const { accessToken, roles } = response.data;
+        const userRole = roles[0]; // Assuming user has one primary role
 
-          // Redirect to job application page after login
-          this.$router.push('/job-application');
+        // Store auth token and role in localStorage
+        localStorage.setItem('authToken', accessToken);
+        localStorage.setItem('userRole', userRole);
+        console.log('Token stored:', accessToken);
+        console.log('User Role:', userRole);
+
+        // Redirect based on the user's role
+        if (userRole === 'ROLE_ADMIN') {
+          this.$router.push({ name: 'AdminUserManagement' });
+        } else if (userRole === 'ROLE_USER') {
+          this.$router.push({ name: 'JobApplication' });
+        } else if (userRole === 'ROLE_MODERATOR'){
+          this.$router.push({name:'AdminPage'});
         } else {
-          console.error('No token received in login response');
+          this.$router.push({ name: 'HomePage' });
         }
       } catch (error) {
-        console.error('Login failed:', error);
+        this.errorMessage = 'Invalid login credentials';
+        console.error('Login error:', error);
       }
     }
   }
@@ -59,5 +73,10 @@ export default {
   max-width: 300px;
   margin: auto;
   padding: 20px;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
 }
 </style>

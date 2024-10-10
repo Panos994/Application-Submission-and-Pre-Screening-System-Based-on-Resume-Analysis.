@@ -101,13 +101,14 @@ public class UserController {
 
     ////11.1
 
-
+    @Secured("ROLE_ADMIN")
     @GetMapping("/{userId}/roles")
     public ResponseEntity<Set<Integer>> getUserRoleIds(@PathVariable Long userId) {
         Set<Integer> roleIds = userService.getRoleIdsByUserId(userId);
         return ResponseEntity.ok(roleIds);
     }
 
+    @Secured("ROLE_ADMIN")
     @GetMapping("/roles")
     public ResponseEntity<Set<Integer>> getUserRoleIds(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long userId = userDetails.getId();

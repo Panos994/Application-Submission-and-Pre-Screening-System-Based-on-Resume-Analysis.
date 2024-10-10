@@ -1,3 +1,5 @@
+<!-- Sign-up Page -->
+
 <template>
   <div class="auth-form">
     <h2>Sign Up</h2>

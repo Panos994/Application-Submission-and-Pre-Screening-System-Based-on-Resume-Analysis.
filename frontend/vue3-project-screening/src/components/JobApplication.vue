@@ -1,3 +1,5 @@
+<!-- Candidate Page for apply for Job (either manually scored or AI-assisted proposal -->
+
 <template>
   <div>
     <h1>Test a Job Application</h1>
@@ -32,7 +34,7 @@
 
 
     <br><br>
-    <router-link to="/admin">Go to Employee Page</router-link>
+    <router-link to="/">Go to our Homepage</router-link>
   </div>
 </template>
 

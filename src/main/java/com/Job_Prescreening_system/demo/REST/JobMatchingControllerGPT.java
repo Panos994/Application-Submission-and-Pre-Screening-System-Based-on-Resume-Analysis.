@@ -7,6 +7,7 @@ import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,9 @@ public class JobMatchingControllerGPT {
     @Autowired
     private JobService jobService;
 
+
+
+    @Secured("ROLE_USER")
     @PostMapping("/match-candidate")
     public ResponseEntity<String> matchCandidate(@RequestParam("resume") MultipartFile resumeFile) {
         try {
