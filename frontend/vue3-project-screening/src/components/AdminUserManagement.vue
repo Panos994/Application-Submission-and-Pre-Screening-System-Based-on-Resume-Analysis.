@@ -1,7 +1,7 @@
 <!-- Admin Page for User Management-->
 <template>
   <div>
-    <h1> User Management</h1>
+    <h1> Users</h1>
 
     <!-- Displaying users -->
     <table>
@@ -22,6 +22,12 @@
         <td>
           <button @click="deleteUser(user.id)">Delete User</button>
         </td>
+
+
+
+
+
+
         <td>
           <button @click="addRole(user.id, 'ROLE_MODERATOR')">Add Moderator</button>
           <button @click="deleteRole(user.id, 'ROLE_MODERATOR')">Delete Moderator</button>
@@ -35,7 +41,7 @@
     </table>
   </div>
 
-  <router-link to="/">Go to Homepage</router-link>
+  <!--router-link to="/">Go to Homepage</router-link-->
 </template>
 
 <script>

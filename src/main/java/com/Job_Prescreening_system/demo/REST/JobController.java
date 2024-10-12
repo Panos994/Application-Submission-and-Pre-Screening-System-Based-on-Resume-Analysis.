@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/jobs")
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = "http://localhost:8081")
 public class JobController {
 
     @Autowired
@@ -141,7 +141,7 @@ public class JobController {
     // Export jobs to Excel
     @Autowired
     private ExcelExportService excelExportService;
-    @Secured("ROLE_MODERATOR")
+    //@Secured("ROLE_MODERATOR")
     @GetMapping("/export")
     public void exportJobsToExcel(HttpServletResponse response) throws IOException {
         List<Job> jobs = jobService.getAllJobsWithTopApplications();  // Or any other method to fetch jobs

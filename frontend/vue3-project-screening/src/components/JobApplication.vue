@@ -2,7 +2,7 @@
 
 <template>
   <div>
-    <h1>Test a Job Application</h1>
+    <h1>Apply for a Job</h1>
 
     <!-- Manual Job Selection and Submission -->
     <label for="jobSelect">Select a Job (Manual):</label>
@@ -18,23 +18,29 @@
     <!-- Displaying the manual score after submission -->
     <p v-if="scoreMessage">{{ scoreMessage }}</p>
 
+    <br><br><br><br><br><br>
+
+<hr>
+
+
+    <br><br><br>
     <!-- AI-based Resume Submission -->
     <h2>AI-Assisted Job Matching</h2>
     <input type="file" @change="handleFileUploadAI" accept=".pdf,.doc,.docx" />
     <button @click="submitAIResume">Submit Resume for AI Matching</button>
 
     <!-- Displaying the AI-based job match -->
-    <!--p v-if="aiMatchMessage">{{ aiMatchMessage }}</p-->
-
-
-
     <h3>Agent Smith Response:</h3>
-    <pre v-if="aiResponseData">{{ aiResponseData }}</pre>
+    <pre v-if="aiResponseData" :class="{ 'typing-effect': showTyping }">{{ aiResponseData }}</pre>
+
+    <br><br><br><br><br><br>
+
+    <router-link to="/CandidateJobList">Go to Job List</router-link>
+    <br><br><br>
+    <router-link to="/">Return Back</router-link>
 
 
 
-    <br><br>
-    <router-link to="/">Go to our Homepage</router-link>
   </div>
 </template>
 
@@ -49,8 +55,8 @@ export default {
       selectedJobId: null,   // To store selected job
       jobs: [],              // List of jobs
       scoreMessage: '',      // Message displaying score after manual submission
-      aiMatchMessage: '',     // Message displaying AI-based job match
-      aiResponseData: ''
+      aiResponseData: '',    // Raw AI response data
+      showTyping: false      // To control the typing effect
     };
   },
   methods: {
@@ -114,8 +120,8 @@ export default {
         return;
       }
 
-      this.aiMatchMessage = ''; // Reset message on new submission
       this.aiResponseData = ''; // Reset raw response data
+      this.showTyping = false;  // Reset typing effect
 
       const formData = new FormData();
       formData.append('resume', this.resumeFile);
@@ -130,24 +136,15 @@ export default {
           }
         });
 
-        console.log('AI matching response:', response.data); // Log full response for debugging
-
-        // Store the raw response data
-        this.aiResponseData = JSON.stringify(response.data, null, 2); // Stringify for pretty printing
-
-        // Assuming the backend sends a 'message' field with the full response
-        if (response.data.message) {
-          this.aiMatchMessage = response.data.message; // Set the AI message directly
-        } else {
-          this.aiMatchMessage = 'AI matched you to: No match found';
-        }
+        // Set the response and trigger typing effect
+        this.aiResponseData = JSON.stringify(response.data, null, 2);
+        this.showTyping = true;  // Start typing effect
 
         alert('AI job matching complete! Check your results.');
 
       } catch (error) {
         console.error('Error matching job:', error);
         if (error.response) {
-          console.error('Response data:', error.response.data);
           alert(`Error: ${error.response.data}`);
         } else {
           alert('An error occurred while matching the job.');
@@ -180,3 +177,119 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+/* General Layout */
+.job-application-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  padding: 2rem;
+  max-width: 900px;
+  background-color: #f3f2ef;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h1, h2 {
+  color: #1f4b7b;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+h3 {
+  color: #0073b1;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Form Elements */
+label {
+  font-weight: bold;
+  color: #333;
+  margin-top: 1rem;
+  text-align: left;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+select, input[type="file"] {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: #333;
+}
+
+button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #0073b1;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #005f8d;
+}
+
+/* Score and Messages */
+p {
+  font-size: 1rem;
+  color: #333;
+  margin-top: 1rem;
+  background-color: #e9f7fe;
+  padding: 1rem;
+  border: 1px solid #b2e0f6;
+  border-radius: 5px;
+}
+
+pre {
+  background-color: #eef3f8;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: #333;
+  border-radius: 5px;
+}
+
+/* Typing Effect */
+.typing-effect {
+  border-right: 2px solid rgba(0, 0, 0, 0.75);
+  white-space: nowrap;
+  overflow: hidden;
+  animation: typing 3.5s steps(40, end), blink 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+/* Links */
+a {
+  color: #0073b1;
+  font-weight: bold;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+</style>

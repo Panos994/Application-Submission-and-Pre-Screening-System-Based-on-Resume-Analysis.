@@ -10,22 +10,30 @@ import JobApplication from './components/JobApplication.vue';
 import LoginPage from './components/LoginPage.vue';
 import SignUpPage from './components/SignUpPage.vue';
 import AdminPage from './components/AdminPage.vue';
-import AdminUserManagement from "@/components/AdminUserManagement.vue"; // Import AdminPage
+import AdminUserManagement from "@/components/AdminUserManagement.vue";
+import LayoutPage from "@/components/LayoutPage.vue";
+import CandidateJobList from "@/components/CandidateJobList.vue"; // Import AdminPage
 
 // Set base URL for Axios
 axios.defaults.baseURL = 'http://localhost:9090';
 
 // Define routes
 const routes = [
-    { path: '/', name: 'HomePage', component: HomePage },
-    { path: '/job-application', name: 'JobApplication', component: JobApplication },
-    { path: '/login', name: 'LoginPage', component: LoginPage },
-    { path: '/signup', name: 'SignUpPage', component: SignUpPage },
-    { path: '/admin', name: 'AdminPage', component: AdminPage }, // Add route for AdminPage
+    {
+        path: '/',
+        component: LayoutPage,
+            children: [
+                {path: '', name: 'HomePage', component: HomePage},
+                {path: '/job-application', name: 'JobApplication', component: JobApplication},
+                {path: '/login', name: 'LoginPage', component: LoginPage},
+                {path: '/signup', name: 'SignUpPage', component: SignUpPage},
+                {path: '/admin', name: 'AdminPage', component: AdminPage}, // Add route for AdminPage
 
-    { path: '/adminUserManagement', name: 'AdminUserManagement', component: AdminUserManagement }
+                {path: '/adminUserManagement', name: 'AdminUserManagement', component: AdminUserManagement},
 
-
+                {path: '/CandidateJobList', name: 'CandidateJobList', component: CandidateJobList}, // Add route for AdminPage
+           ]
+     }
 ];
 
 // Create router instance

@@ -1,125 +1,172 @@
 <!-- Employee page for posting jobs -->
 <template>
-  <div>
-    <h1>Manage Job Requirements</h1>
-    <form @submit.prevent="submitJob">
-      <label for="title">Title:</label>
-      <input type="text" v-model="job.title" required />
+  <div class="container">
 
-      <label for="description">Description:</label>
-      <textarea v-model="job.description" required></textarea>
+    <div class="form-container">
+      <h1>Job Postings</h1>
+      <form @submit.prevent="submitJob">
 
-      <label for="requiredSkills">Required Skills (comma-separated):</label>
-      <input type="text" v-model="job.requiredSkills" required />
-
-      <label for="minExperience">Minimum Experience (years):</label>
-      <input type="number" v-model.number="job.minExperience" required min="0" />
-
-      <label for="educationLevel">Education Level:</label>
-      <div>
-        <input type="checkbox" value="BSc" v-model="job.educationLevels"> BSc
-        <input type="checkbox" value="Master" v-model="job.educationLevels"> Master
-        <input type="checkbox" value="PhD" v-model="job.educationLevels"> PhD
-        <input type="checkbox" value="High School" v-model="job.educationLevels"> High School
-      </div>
-
-
-      <label for="institutionType">Institution Type:</label>
-      <div>
-        <input type="checkbox" value="AEI" v-model="job.institutionTypes"> Ανώτατο Εκπαιδευτικό Ίδρυμα (AEI)
-        <input type="checkbox" value="TEI" v-model="job.institutionTypes"> Τεχνολογικό Εκπαιδευτικό Ίδρυμα (TEI)
-        <input type="checkbox" value="PrivateCollege" v-model="job.institutionTypes"> Ιδιωτικό Κολλέγιο
-        <input type="checkbox" value="IEK" v-model="job.institutionTypes"> Ινστιτούτο Εκπαιδευτικής Κατάρτισης (IEK)
-        <input type="checkbox" value="ForeignUniversity" v-model="job.institutionTypes"> Πανεπιστήμιο εξωτερικού
-      </div>
+        <div class="form-group">
+          <label for="title">Title:</label>
+          <input type="text" v-model="job.title" required class="input-field" />
+        </div>
 
 
 
-
-      <label for="universityPreference">Preferred Universities:</label>
-      <div>
-        <select v-model="job.universityPreferences" multiple>
-          <option value="National and Kapodistrian University of Athens">National and Kapodistrian University of Athens</option>
-          <option value="Harokopio University of Athens">Harokopio University of Athens</option>
-
-          <option value="Athens University of Economics and Business">Athens University of Economics and Business</option>
-          <option value="Aristotle University of Thessaloniki">Aristotle University of Thessaloniki</option>
-          <option value="National Technical University of Athens[">National Technical University of Athens[</option>
-          <option value="University of Piraeus ">University of Piraeus</option>
-          <option value="University of Patras">University of Patras</option>
-          <option value="University of Crete">University of Crete</option>
-
-          <option value="University of West Attica (formerly TEI of Athens and TEI of Piraeus) ">University of West Attica (formerly TEI of Athens and TEI of Piraeus) </option>
-          <option value="Agricultural University of Athens">Agricultural University of Athens</option>
-          <option value="Athens School of Fine Arts">Athens School of Fine Arts</option>
-          <option value="Democritus University of Thrace">Democritus University of Thrace</option>
-
-          <option value="Technical University of Crete ">Technical University of Crete </option>
-          <option value="University of Peloponnese">University of Peloponnese</option>
-          <option value="University of the Aegean ">University of the Aegean </option>
-          <option value="University of Crete ">University of Crete </option>
-          <option value="Panteion University ">Panteion University </option>
-          <option value="Ionian University">Ionian University </option>
-          <option value="International Hellenic University">International Hellenic University </option>
-          <option value="University of Ioannina ">University of Ioannina </option>
-          <option value="University of Macedonia ">University of Macedonia</option>
-          <option value="University of Patras ">University of Patras</option>
-          <option value="University of Western Macedonia "> University of Western Macedonia</option>
-          <option value="University of Thessaly "> University of Thessaly</option>
-          <option value="Hellenic Open University">Hellenic Open University</option>
-          <option value="School of Pedagogical and Technological Education (ASPETE) ">  School of Pedagogical and Technological Education (ASPETE)</option>
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <textarea v-model="job.description" required class="textarea-field"></textarea>
+        </div>
 
 
 
+        <div class="form-group">
+          <label for="requiredSkills">Required Skills (comma-separated):</label>
+          <input type="text" v-model="job.requiredSkills" required class="input-field" />
+        </div>
+
+
+
+        <div class="form-group">
+          <label for="minExperience">Minimum Experience (years):</label>
+          <input type="number" v-model.number="job.minExperience" required min="0" class="input-field" />
+        </div>
+
+
+
+        <div class="form-group">
+          <label for="educationLevel">Education Level:</label>
+          <div class="checkbox-group">
+            <input type="checkbox" value="BSc" v-model="job.educationLevels"> BSc
+            <input type="checkbox" value="Master" v-model="job.educationLevels"> Master
+            <input type="checkbox" value="PhD" v-model="job.educationLevels"> PhD
+            <input type="checkbox" value="High School" v-model="job.educationLevels"> High School
+          </div>
+        </div>
+
+
+
+        <div class="form-group">
+          <label for="institutionType">Institution Type:</label>
+          <div class="checkbox-group">
+            <input type="checkbox" value="AEI" v-model="job.institutionTypes"> Ανώτατο Εκπαιδευτικό Ίδρυμα (AEI)
+            <input type="checkbox" value="TEI" v-model="job.institutionTypes"> Τεχνολογικό Εκπαιδευτικό Ίδρυμα (TEI)
+            <input type="checkbox" value="PrivateCollege" v-model="job.institutionTypes"> Ιδιωτικό Κολλέγιο
+            <input type="checkbox" value="IEK" v-model="job.institutionTypes"> Ινστιτούτο Εκπαιδευτικής Κατάρτισης (IEK)
+            <input type="checkbox" value="ForeignUniversity" v-model="job.institutionTypes"> Πανεπιστήμιο εξωτερικού
+          </div>
+        </div>
+
+        <br><br><br><br><br><br><br>
+
+        <div class="form-group">
+          <label for="universityPreference">Preferred Universities:</label>
+          <div>
+            <select v-model="job.universityPreferences" multiple class="select-field">
+              <option value="National and Kapodistrian University of Athens">National and Kapodistrian University of Athens</option>
+              <option value="Harokopio University of Athens">Harokopio University of Athens</option>
+              <option value="Athens University of Economics and Business">Athens University of Economics and Business</option>
+              <option value="Aristotle University of Thessaloniki">Aristotle University of Thessaloniki</option>
+              <option value="National Technical University of Athens">National Technical University of Athens</option>
+              <option value="University of Piraeus">University of Piraeus</option>
+              <option value="University of Patras">University of Patras</option>
+              <option value="University of Crete">University of Crete</option>
+              <option value="University of West Attica">University of West Attica</option>
+              <option value="Agricultural University of Athens">Agricultural University of Athens</option>
+              <option value="Athens School of Fine Arts">Athens School of Fine Arts</option>
+              <option value="Democritus University of Thrace">Democritus University of Thrace</option>
+              <option value="Technical University of Crete">Technical University of Crete</option>
+              <option value="University of Peloponnese">University of Peloponnese</option>
+              <option value="University of the Aegean">University of the Aegean</option>
+              <option value="Panteion University">Panteion University</option>
+              <option value="Ionian University">Ionian University</option>
+              <option value="International Hellenic University">International Hellenic University</option>
+              <option value="University of Ioannina">University of Ioannina</option>
+              <option value="University of Macedonia">University of Macedonia</option>
+              <option value="University of Patras">University of Patras</option>
+              <option value="University of Western Macedonia">University of Western Macedonia</option>
+              <option value="University of Thessaly">University of Thessaly</option>
+              <option value="Hellenic Open University">Hellenic Open University</option>
+              <option value="School of Pedagogical and Technological Education (ASPETE)">School of Pedagogical and Technological Education (ASPETE)</option>
+            </select>
+          </div>
+        </div>
+
+
+        <br><br><br><br><br>
+
+        <div class="form-group">
+          <label for="experienceWeight">Weight for Experience (%):</label>
+          <input type="number" v-model.number="criteriaWeights.minExperience" required min="0" max="100" />
+        </div>
+
+        <br><br><br>
+
+        <div class="form-group">
+          <label for="educationWeight">Weight for Education (%):</label>
+          <input type="number" v-model.number="criteriaWeights.education" required min="0" max="100" />
+        </div>
+
+        <br><br><br>
+
+        <div class="form-group">
+          <label for="skillsWeight">Weight for Skills (%):</label>
+          <input type="number" v-model.number="criteriaWeights.skills" required min="0" max="100" />
+        </div>
+
+
+        <br><br><br>
+        <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
+        <button type="submit" class="submit-button">Save Job</button>
+      </form>
+    </div>
+
+
+
+    <div class="job-list-container">
+      <h2>Job List</h2>
+      <table class="job-table">
+        <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Education Level</th>
+          <th>Institution Type</th> <!-- Added Institution Type -->
+          <th>Preferred Universities</th> <!-- Added Preferred Universities -->
 
 
 
 
 
 
+          <th>Required Skills</th>
+          <th>Experience</th>
+          <th>Score Weights</th>
+          <th>Highest Candidates' Scores</th>
+          <th>Candidates CV Files</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="job in jobs" :key="job.id">
+          <td>{{ job.title }}</td>
+          <td>{{ job.description }}</td>
+          <td>{{ job.educationLevel }}</td>
+          <td>{{ job.institutionType }}</td> <!-- Added Institution Type -->
+          <td>{{ job.universityPreference }}</td>
 
-          <!-- Add more Greek universities as needed -->
-        </select>
-      </div>
+
+          <td>{{ job.requiredSkills }}</td>
+          <td>{{ job.minExperience }} years</td>
+          <td>Experience: {{ job.minExperienceWeight }}%, Education: {{ job.educationWeight }}%, Skills: {{ job.skillsWeight }}%</td>
+          <td>Highest Score: {{ job.topMatchScore || 'N/A' }} </td>
+          <td>CV Files: {{ job.topCvFileNames || 'N/A' }} </td>
 
 
-
-
-
-
-      <label for="experienceWeight">Weight for Experience (%):</label>
-      <input type="number" v-model.number="criteriaWeights.minExperience" required min="0" max="100" />
-
-      <label for="educationWeight">Weight for Education (%):</label>
-      <input type="number" v-model.number="criteriaWeights.education" required min="0" max="100" />
-
-      <label for="skillsWeight">Weight for Skills (%):</label>
-      <input type="number" v-model.number="criteriaWeights.skills" required min="0" max="100" />
-
-      <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
-      <button type="submit">Save Job</button>
-    </form>
-
-    <h2>Job List</h2>
-    <ul>
-      <li v-for="job in jobs" :key="job.id">
-        <strong>Title:</strong> {{ job.title }} -
-        <strong>Brief Description:</strong> {{ job.description }} -
-        <strong>Education Level:</strong> {{ job.educationLevel }} -
-        <strong>Preferred Universities:</strong> {{ job.universityPreference }} -
-        <strong>Institution:</strong> {{ job.institutionType}} -
-        <strong>Required Skills:</strong> {{ job.requiredSkills }} -
-        <strong>Experience (years):</strong> {{ job.minExperience }} -
-        <strong>Weights:</strong> Experience: {{ job.minExperienceWeight }}%, Education: {{ job.educationWeight }}%, Skills: {{ job.skillsWeight }}% -
-        <strong>Highest Score:</strong> {{ job.topMatchScore || 'N/A' }} -
-        <strong>CV Files:</strong> {{ job.topCvFileNames || 'N/A' }}
-      </li>
-      <br>
-      <button @click="exportToExcel">Export to Excel</button>
-
-      <br><br><br>
-      <router-link to="/">Go to our Homepage</router-link>
-    </ul>
+        </tr>
+        </tbody>
+      </table>
+      <button @click="exportToExcel" class="export-button">Export to Excel</button>
+    </div>
   </div>
 </template>
 
@@ -148,6 +195,8 @@ export default {
     };
   },
   methods: {
+
+
     async submitJob() {
       // Calculate the total weight
       const totalWeight = this.criteriaWeights.minExperience + this.criteriaWeights.education + this.criteriaWeights.skills;
@@ -272,3 +321,87 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.container {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.form-container,
+.job-list-container {
+  flex: 1;
+  margin: 10px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+h1, h2 {
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.input-field,
+.textarea-field,
+.select-field {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.textarea-field {
+  height: 100px;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+
+.submit-button, .export-button {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submit-button:hover, .export-button:hover {
+  background-color: #218838;
+}
+
+.job-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.job-table th, .job-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.job-table th {
+  background-color: #f8f9fa;
+}
+</style>
