@@ -2,6 +2,8 @@
 
 <template>
   <div>
+    <br>  <br>
+    <center><router-link to="/CandidateJobList">Check Our Available Job Positions</router-link></center>
     <h1>Apply for a Job</h1>
 
     <!-- Manual Job Selection and Submission -->
@@ -20,7 +22,7 @@
 
     <br><br><br><br><br><br>
 
-<hr>
+    <hr>
 
 
     <br><br><br>
@@ -30,13 +32,15 @@
     <button @click="submitAIResume">Submit Resume for AI Matching</button>
 
     <!-- Displaying the AI-based job match -->
+    <!-- Updated AI-Assisted Job Matching section -->
     <h3>Agent Smith Response:</h3>
-    <pre v-if="aiResponseData" :class="{ 'typing-effect': showTyping }">{{ aiResponseData }}</pre>
+    <div style="max-width: 100%; overflow-x: auto;" v-if="aiResponseData" :class="{ 'typing-effect': showTyping }" v-html="aiResponseData"></div>
+
+
+    <br>
+
 
     <br><br><br><br><br><br>
-
-    <router-link to="/CandidateJobList">Go to Job List</router-link>
-    <br><br><br>
     <router-link to="/">Return Back</router-link>
 
 
@@ -135,9 +139,12 @@ export default {
             'Authorization': `Bearer ${authToken}`
           }
         });
+        // Convert newline characters to <br> for HTML rendering
+        //const formattedResponse = JSON.stringify(response.data, null, 2).replace(/\n/g, '<br>');
+        const formattedResponse = response.data.replace(/\n/g, '<br>').replace(/\t/g, '&emsp;');
 
-        // Set the response and trigger typing effect
-        this.aiResponseData = JSON.stringify(response.data, null, 2);
+        // Set the formatted response and trigger typing effect
+        this.aiResponseData = formattedResponse;
         this.showTyping = true;  // Start typing effect
 
         alert('AI job matching complete! Check your results.');
@@ -156,7 +163,7 @@ export default {
     async fetchJobs() {
       try {
         const authToken = localStorage.getItem('authToken');
-        const response = await axios.get('http://localhost:9090/api/jobs/topApplication', {
+        const response = await axios.get('http://localhost:9090/api/jobs/all', {
           headers: {
             'Authorization': `Bearer ${authToken}`
           }

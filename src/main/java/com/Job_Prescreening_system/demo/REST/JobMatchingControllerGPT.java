@@ -23,8 +23,6 @@ public class JobMatchingControllerGPT {
     @Autowired
     private JobService jobService;
 
-
-
     @Secured("ROLE_USER")
     @PostMapping("/match-candidate")
     public ResponseEntity<String> matchCandidate(@RequestParam("resume") MultipartFile resumeFile) {
@@ -35,18 +33,13 @@ public class JobMatchingControllerGPT {
             // Get list of jobs from the job service
             List<Job> jobList = jobService.getAllJobs();
 
-            // Analyze the resume text using GPT to find the best job match
-            String bestMatch = gptService.analyzeResumeAndMatchJob(resumeText, jobList);
+            // Analyze the resume text using GPT to find the top 3 job matches
+            String bestMatches = gptService.analyzeResumeAndMatchJobs(resumeText, jobList);
 
-            return ResponseEntity.ok(bestMatch);
+            return ResponseEntity.ok(bestMatches);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing the resume file.");
         }
     }
-
-
-
-
-
 }

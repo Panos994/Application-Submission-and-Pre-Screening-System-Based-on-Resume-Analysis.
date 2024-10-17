@@ -1,6 +1,7 @@
 package com.Job_Prescreening_system.demo.Entities;
 
 
+
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -11,6 +12,8 @@ public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
 
     private String title;
     private String description;
@@ -186,5 +189,58 @@ public class Job {
     public void setUniversityPreference(String universityPreference) {
         this.universityPreference = universityPreference;
     }
+
+
+
+    private String location; // e.g., Athens, Greece
+    private String sector; // e.g., Informatics, Marketing
+    private String workType; // e.g., full time, part time, remote
+    private String jobLevel; //
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getSector() {
+        return sector;
+    }
+
+    public void setSector(String sector) {
+        this.sector = sector;
+    }
+
+    public String getWorkType() {
+        return workType;
+    }
+
+    public void setWorkType(String workType) {
+        this.workType = workType;
+    }
+
+    public String getJobLevel() {
+        return jobLevel;
+    }
+
+    public void setJobLevel(String jobLevel) {
+        this.jobLevel = jobLevel;
+    }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "userid", nullable = false) // Link the job to the user who created it
+    private User user;
+
+    // Getters and Setters
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+
 
 }

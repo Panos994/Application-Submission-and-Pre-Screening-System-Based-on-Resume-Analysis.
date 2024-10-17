@@ -6,10 +6,39 @@
       <h1>Job Postings</h1>
       <form @submit.prevent="submitJob">
 
+
+
+
+
+
         <div class="form-group">
           <label for="title">Title:</label>
           <input type="text" v-model="job.title" required class="input-field" />
         </div>
+
+
+        <div class="form-group">
+          <label for="location">Location:</label>
+          <input type="text" v-model="job.location" required class="input-field" />
+        </div>
+
+        <div class="form-group">
+          <label for="sector">Department:</label>
+          <input type="text" v-model="job.sector" required class="input-field" />
+        </div>
+
+        <div class="form-group">
+          <label for="workType">Type of Employment:</label>
+          <input type="text" v-model="job.workType" required class="input-field" />
+        </div>
+
+        <div class="form-group">
+          <label for="jobLevel">Level of position:</label>
+          <input type="text" v-model="job.jobLevel" required class="input-field" />
+        </div>
+
+
+
 
 
 
@@ -128,7 +157,16 @@
       <table class="job-table">
         <thead>
         <tr>
+
           <th>Title</th>
+          <th>Location</th>
+          <th>Department</th>
+          <th>Type of Employment</th>
+          <th>Job Level</th>
+
+
+
+
           <th>Description</th>
           <th>Education Level</th>
           <th>Institution Type</th> <!-- Added Institution Type -->
@@ -148,7 +186,17 @@
         </thead>
         <tbody>
         <tr v-for="job in jobs" :key="job.id">
+
           <td>{{ job.title }}</td>
+          <td>{{ job.location }}</td>
+          <td>{{ job.sector }}</td>
+          <td>{{ job.workType }}</td>
+          <td>{{ job.jobLevel }}</td>
+
+
+
+
+
           <td>{{ job.description }}</td>
           <td>{{ job.educationLevel }}</td>
           <td>{{ job.institutionType }}</td> <!-- Added Institution Type -->
@@ -177,7 +225,12 @@ export default {
   data() {
     return {
       job: {
+
         title: '',
+        location: '',
+        sector: '',
+        workType: '',
+        jobLevel: '',
         description: '',
         requiredSkills: '',
         minExperience: null,
@@ -198,10 +251,8 @@ export default {
 
 
     async submitJob() {
-      // Calculate the total weight
       const totalWeight = this.criteriaWeights.minExperience + this.criteriaWeights.education + this.criteriaWeights.skills;
 
-      // Validate that the total weight is 100%
       if (totalWeight !== 100) {
         this.errorMessage = 'The total of all weights must equal 100%.';
         return;
@@ -211,19 +262,18 @@ export default {
 
       try {
         const authToken = localStorage.getItem('authToken');
-        console.log('Token:', authToken);
-
-
 
         const educationLevelString = this.job.educationLevels.join(', ');
-
         const institutionTypeString = this.job.institutionTypes.join(', ');
-
         const universityPreferenceString = this.job.universityPreferences.join(', ');
 
-        // Construct the job object with weights
         const jobToSave = {
+
           title: this.job.title,
+          location: this.job.location,
+          sector: this.job.sector,
+          workType: this.job.workType,
+          jobLevel: this.job.jobLevel,
           description: this.job.description,
           requiredSkills: this.job.requiredSkills,
           minExperience: this.job.minExperience,
@@ -243,29 +293,31 @@ export default {
         });
 
         alert('Job saved successfully!');
-        // Reset the form fields
         this.resetForm();
-
-        // Fetch the latest jobs after saving
-        this.fetchJobs();
+        await this.fetchJobs(); //this.fetchJobs();
       } catch (error) {
         console.error('Error saving job:', error);
-        if (error.response) {
-          this.errorMessage = error.response.data;
+        if (error.response && error.response.data) {
+          this.errorMessage = error.response.data.message || 'Error occurred while saving the job.';
         } else {
           this.errorMessage = 'An error occurred while saving the job.';
         }
       }
     },
     resetForm() {
-      // Reset the form fields
       this.job = {
+
         title: '',
+        location: '',
+        sector: '',
+        workType: '',
+        jobLevel: '',
         description: '',
         requiredSkills: '',
         minExperience: null,
-        institutionTypes: [] ,
-        educationLevels: []
+        institutionTypes: [],
+        educationLevels: [],
+        universityPreferences: []
       };
       this.criteriaWeights = {
         minExperience: 0,
@@ -276,36 +328,43 @@ export default {
     async fetchJobs() {
       try {
         const authToken = localStorage.getItem('authToken');
-        const response = await axios.get('http://localhost:9090/api/jobs/topApplication', {
+        const username = localStorage.getItem('username');
+
+
+        console.log('Auth Token:', authToken); // Log the auth token
+        console.log('Username:', username); // Log the username
+
+        if (!username) {
+          this.errorMessage = 'Username is not available.';
+          return;
+        }
+
+        const response = await axios.get(`http://localhost:9090/api/jobs/user/${username}`, {
           headers: {
             'Authorization': `Bearer ${authToken}`
           }
         });
 
-        // Process each job in the response
-        this.jobs = response.data.map(job => {
-          // Handle cases where topMatchScore might be null or undefined
-          const score = job.topMatchScore != null ? job.topMatchScore.toString() : null;
-
-          // Extract and format the score
-          const regex = /(\d+(\.\d+)?)/; // Matches a number with optional decimals
-          const match = score ? score.match(regex) : null; // Only match if score is not null
-
-          const formattedScore = match ? parseFloat(match[0]).toFixed(2) : 'N/A'; // Round to 2 decimal places
-
-          return {
-            ...job,
-            topCvFileNames: Array.from(new Set(job.topCvFileNames.split(', '))).join(', '),
-            topMatchScore: formattedScore // Set the formatted score
-          };
-        });
-
+        // Check if response.data is an array before mapping
+        if (Array.isArray(response.data)) {
+          this.jobs = response.data.map(job => {
+            return {
+              ...job,
+              topMatchScore: job.topMatchScore || 'N/A', // Fallback to 'N/A' if undefined
+              topCvFileNames: job.topCvFileNames || 'N/A' // Fallback to 'N/A' if undefined
+            };
+          });
+        } else {
+          this.errorMessage = 'No jobs found for this user or invalid response format.';
+        }
       } catch (error) {
         console.error('Error fetching jobs:', error);
-        this.errorMessage = 'An error occurred while fetching jobs.'; // Set a general error message
+        if (error.response && error.response.data) {
+          this.errorMessage = error.response.data.message || 'Error occurred while fetching jobs.';
+        } else {
+          this.errorMessage = 'An error occurred while fetching jobs.';
+        }
       }
-
-
     },
 
     exportToExcel() {
@@ -316,8 +375,8 @@ export default {
       window.location.href = `${url}?authToken=${authToken}`;
     }
   },
-  mounted() {
-    this.fetchJobs();
+  created() {
+    this.fetchJobs(); // Fetch jobs when the component is created
   }
 };
 </script>

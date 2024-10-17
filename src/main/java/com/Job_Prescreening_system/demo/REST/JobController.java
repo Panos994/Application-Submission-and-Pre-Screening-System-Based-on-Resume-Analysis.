@@ -11,11 +11,12 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/jobs")
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "http://localhost:8080")
 public class JobController {
 
     @Autowired
@@ -65,6 +66,9 @@ public class JobController {
             application.setCvFileName(resumeFile.getOriginalFilename());
             applicationService.saveApplication(application);
 
+            // Update job with the new top application
+            jobService.updateJobWithTopApplication(job);
+
             // Return the score and success message
             return ResponseEntity.ok("Your resume scored: " + matchScore + " points!");
 
@@ -75,6 +79,7 @@ public class JobController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
 
 
 
@@ -93,9 +98,12 @@ public class JobController {
     // Create a new job (only accessible to employee)
     @Secured("ROLE_MODERATOR")
     @PostMapping("/create")
-    public ResponseEntity<?> createJob(@RequestBody Job job) {
+    public ResponseEntity<?> createJob(@RequestBody Job job, Principal principal) {
         try {
-            Job savedJob = jobService.saveJob(job);
+            // Get the logged-in user's username from the Principal object
+            String username = principal.getName();
+
+            Job savedJob = jobService.saveJob(job, username);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedJob);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error creating job: " + e.getMessage());
@@ -104,17 +112,10 @@ public class JobController {
 
     // Fetch all jobs
 
-    @GetMapping
-    public ResponseEntity<List<Job>> getAllJobs() {
-        List<Job> jobs = jobService.getAllJobs();
-        if (jobs.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.ok(jobs);
-    }
+
 
     // Fetch all jobs with top applications
-
+    @Secured("ROLE_USER")
     @GetMapping("/topApplication")
     public ResponseEntity<List<Job>> getAllTopJobs() {
         List<Job> jobs = jobService.getAllJobsWithTopApplications();
@@ -147,4 +148,46 @@ public class JobController {
         List<Job> jobs = jobService.getAllJobsWithTopApplications();  // Or any other method to fetch jobs
         excelExportService.exportJobListToExcel(jobs, response);
     }
+
+
+
+    @Secured("ROLE_MODERATOR")
+    @GetMapping("/user/{username}")
+    public ResponseEntity<List<Job>> getJobsByUser(@PathVariable String username) {
+        List<Job> jobs = jobService.getJobsByUsername(username);
+        if (jobs.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.ok(jobs);
+    }
+
+
+
+
+
+
+
+ /*
+    @GetMapping("/allJob")
+    public ResponseEntity<List<Job>> getAllJobs() {
+        List<Job> jobs = jobService.getAllJobs();
+        if (jobs.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.ok(jobs);
+    }
+       */
+
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Job>> getAllJobsPublic() {
+        List<Job> jobs = jobService.getAllJobs();
+        if (jobs == null || jobs.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.ok(jobs);
+    }
+
+
+
 }

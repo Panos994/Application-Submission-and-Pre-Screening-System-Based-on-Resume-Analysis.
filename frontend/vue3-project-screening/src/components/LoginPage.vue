@@ -49,6 +49,9 @@ export default {
         const { accessToken, roles } = response.data;
         const userRole = roles[0];
 
+
+        localStorage.setItem('username', this.username); // Store the username
+
         localStorage.setItem('authToken', accessToken);
         localStorage.setItem('userRole', userRole);
 

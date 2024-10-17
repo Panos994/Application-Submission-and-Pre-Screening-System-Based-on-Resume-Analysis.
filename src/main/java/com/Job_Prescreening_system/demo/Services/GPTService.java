@@ -14,10 +14,10 @@ public class GPTService {
 
     private static final Logger logger = Logger.getLogger(GPTService.class);
 
-    // Hard-coded API key
-    private final String API_KEY = "sk-_Ua3GA0KAB-mfh1FrCu495odipU_D4EYxzoXpba_MNT3BlbkFJ6IcybBmeBjrkO0SzG3Jab25Gd_I0gT0X1Y8S23DQ4A"; // Insert  API key here
+    // API key should ideally be stored in a more secure manner
+    private final String API_KEY = "sk-_Ua3GA0KAB-mfh1FrCu495odipU_D4EYxzoXpba_MNT3BlbkFJ6IcybBmeBjrkO0SzG3Jab25Gd_I0gT0X1Y8S23DQ4A";
 
-    public String analyzeResumeAndMatchJob(String resumeText, List<Job> jobList) {
+    public String analyzeResumeAndMatchJobs(String resumeText, List<Job> jobList) {
         if (API_KEY == null || API_KEY.isEmpty()) {
             logger.error("API Key is not set. Please ensure OPENAI_API_KEY is configured.");
             return "Error: API Key is missing.";
@@ -32,9 +32,9 @@ public class GPTService {
 
         // Build JSON request body
         JSONObject requestBody = new JSONObject();
-        requestBody.put("model", "gpt-3.5-turbo"); // Adjust model as needed
-        requestBody.put("messages", generateMessages(resumeText, jobList)); // Update to use messages
-        requestBody.put("max_tokens", 150);
+        requestBody.put("model", "gpt-3.5-turbo");
+        requestBody.put("messages", generateMessages(resumeText, jobList));
+        requestBody.put("max_tokens", 250);  // Increase tokens to accommodate the response for top 3 jobs
 
         // Create HttpEntity with headers and request body
         HttpEntity<String> entity = new HttpEntity<>(requestBody.toString(), headers);
@@ -45,12 +45,12 @@ public class GPTService {
             ResponseEntity<String> response = restTemplate.exchange(gptApiUrl, HttpMethod.POST, entity, String.class);
             if (response.getStatusCode() != HttpStatus.OK) {
                 logger.error("Failed to get response from OpenAI API: " + response.getStatusCode());
-                return "Error analyzing resume and matching job.";
+                return "Error analyzing resume and matching jobs.";
             }
             return parseResponse(response.getBody());
         } catch (Exception e) {
             logger.error("Exception occurred while calling OpenAI API: " + e.getMessage(), e);
-            return "Error analyzing resume and matching job.";
+            return "Error analyzing resume and matching jobs.";
         }
     }
 
@@ -64,7 +64,7 @@ public class GPTService {
 
     private String generatePrompt(String resumeText, List<Job> jobList) {
         StringBuilder prompt = new StringBuilder();
-        prompt.append("Analyze the following resume and suggest the most fitting job:\n")
+        prompt.append("Analyze the following resume and suggest the top 3 jobs that fit the candidate's qualifications. For each suggested job, explain why you believe the candidate would succeed in this position, taking into account their skills, experience, and education.\n")
                 .append(resumeText)
                 .append("\n\nJobs to consider:\n");
 
@@ -72,10 +72,11 @@ public class GPTService {
             prompt.append(String.format("Job Title: %s\nDescription: %s\n\n", job.getTitle(), job.getDescription()));
         }
 
-        prompt.append("Please respond with the job title that best matches the candidate's qualifications.");
+        prompt.append("Please respond with the 3 job titles that best match the candidate's qualifications and explain why they are a good fit for each.");
 
         return prompt.toString();
     }
+
 
     private String parseResponse(String responseBody) {
         JSONObject jsonResponse = new JSONObject(responseBody);
@@ -96,7 +97,4 @@ public class GPTService {
         logger.error("Unexpected response format: " + jsonResponse.toString());
         return "Error: Unable to parse OpenAI response.";
     }
-
-
-
 }

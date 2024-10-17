@@ -5,6 +5,14 @@
       <thead>
       <tr>
         <th>Title</th>
+        <th>Location</th>
+        <th>Department</th>
+        <th>Type of Employment</th>
+        <th>Level of Position</th>
+
+
+
+
         <th>Description</th>
         <th>Education Level</th>
         <th>Required Skills</th>
@@ -15,6 +23,14 @@
       <tbody>
       <tr v-for="job in jobs" :key="job.id">
         <td>{{ job.title }}</td>
+
+        <td>{{ job.location }}</td>
+        <td>{{ job.sector }}</td>
+        <td>{{ job.workType }}</td>
+        <td>{{ job.jobLevel }}</td>
+
+
+
         <td>{{ job.description }}</td>
         <td>{{ job.educationLevel }}</td>
         <td>{{ job.requiredSkills }}</td>
@@ -39,6 +55,13 @@ export default {
     return {
       job: {
         title: '',
+        location: '',
+        sector: '',
+        workType: '',
+        jobLevel: '',
+
+
+
         description: '',
         requiredSkills: '',
         minExperience: null,
@@ -62,36 +85,15 @@ export default {
     async fetchJobs() {
       try {
         const authToken = localStorage.getItem('authToken');
-        const response = await axios.get('http://localhost:9090/api/jobs/topApplication', {
+        const response = await axios.get('http://localhost:9090/api/jobs/all', {
           headers: {
             'Authorization': `Bearer ${authToken}`
           }
         });
-
-        // Process each job in the response
-        this.jobs = response.data.map(job => {
-          // Handle cases where topMatchScore might be null or undefined
-          const score = job.topMatchScore != null ? job.topMatchScore.toString() : null;
-
-          // Extract and format the score
-          const regex = /(\d+(\.\d+)?)/; // Matches a number with optional decimals
-          const match = score ? score.match(regex) : null; // Only match if score is not null
-
-          const formattedScore = match ? parseFloat(match[0]).toFixed(2) : 'N/A'; // Round to 2 decimal places
-
-          return {
-            ...job,
-            topCvFileNames: Array.from(new Set(job.topCvFileNames.split(', '))).join(', '),
-            topMatchScore: formattedScore // Set the formatted score
-          };
-        });
-
+        this.jobs = response.data;
       } catch (error) {
         console.error('Error fetching jobs:', error);
-        this.errorMessage = 'An error occurred while fetching jobs.'; // Set a general error message
       }
-
-
     },
 
 
