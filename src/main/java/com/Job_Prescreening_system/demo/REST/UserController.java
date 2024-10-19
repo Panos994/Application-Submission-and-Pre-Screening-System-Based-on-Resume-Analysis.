@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.Job_Prescreening_system.demo.Entities.User;
 
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.*;
 @RestController
@@ -115,6 +115,34 @@ public class UserController {
         Set<Integer> roleIds = userService.getRoleIdsByUserId(userId);
         return ResponseEntity.ok(roleIds);
     }
+
+
+
+
+
+
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/user/roles")
+    public List<Map<String, Object>> showUsersWithRoles() {
+        List<User> users = userService.getUsers();
+        List<Map<String, Object>> usersWithRoles = new ArrayList<>();
+
+        for (User user : users) {
+            Map<String, Object> userData = new HashMap<>();
+            userData.put("id", user.getId());
+            userData.put("username", user.getUsername());
+            userData.put("email", user.getEmail());
+            userData.put("roles", user.getRoles().stream().map(role::getName).collect(Collectors.toSet()));
+            usersWithRoles.add(userData);
+        }
+
+        return usersWithRoles;
+    }
+
+
+
+
+
 }
 
 

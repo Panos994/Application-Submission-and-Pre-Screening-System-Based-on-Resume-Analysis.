@@ -10,8 +10,9 @@
         <th>ID</th>
         <th>Username</th>
         <th>Email</th>
-        <th>Actions</th>
+        <th>Delete Action</th>
         <th>Roles</th>
+        <th>Assign Actions</th>
       </tr>
       </thead>
       <tbody>
@@ -19,10 +20,18 @@
         <td>{{ user.id }}</td>
         <td>{{ user.username }}</td>
         <td>{{ user.email }}</td>
+
         <td>
           <button @click="deleteUser(user.id)">Delete User</button>
         </td>
 
+
+        <td>
+          <!-- Show user roles -->
+          <ul>
+            <li v-for="role in user.roles" :key="role">{{ role }}</li>
+          </ul>
+        </td>
 
 
 
@@ -71,12 +80,13 @@ export default {
     // Fetch all users
     fetchUsers() {
       const token = this.getAuthToken();
-      axios.get('/api/user', {
+      axios.get('/api/user/user/roles', {
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
           .then(response => {
+            console.log(response.data);
             this.users = response.data;
           })
           .catch(error => {

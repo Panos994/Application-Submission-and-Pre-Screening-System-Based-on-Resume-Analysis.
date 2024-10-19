@@ -53,8 +53,8 @@ public class User {
     private String password;
 
 
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
+    //@JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))

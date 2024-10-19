@@ -33,7 +33,7 @@
 
     <!-- Displaying the AI-based job match -->
     <!-- Updated AI-Assisted Job Matching section -->
-    <h3><em>Agent Smith Responses propose you the Top 3 best matching jobs to get high scores:</em></h3>
+    <h3><em>Agent Smith Responses propose you the Top 3 best matching jobs to get high scores (using LLM AI agent):</em></h3>
     <div style="max-width: 100%; overflow-x: auto;" v-if="aiResponseData" :class="{ 'typing-effect': showTyping }" v-html="aiResponseData"></div>
 
 
