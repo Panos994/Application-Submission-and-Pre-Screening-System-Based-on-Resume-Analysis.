@@ -1,0 +1,12 @@
+Log created: 2024-10-18T09:16:14.120770000Z
+Process ID:  7693 (0x1e0d)
+Parent PID:  2432 (0x980)
+Executable:  /usr/lib/virtualbox/VBoxHeadless
+Arg[0]: /usr/lib/virtualbox/VBoxHeadless
+Arg[1]: --comment
+Arg[2]: Application-Submission-and-Pre-Screening-System-Based-on-Resume-Analysis_default_1729184213816_37162
+Arg[3]: --startvm
+Arg[4]: 37fdd1bb-ae02-424c-8a56-7941880bd411
+Arg[5]: --vrde
+Arg[6]: config
+AddRef: illegal refcnt=3221225469 state=2

@@ -285,7 +285,7 @@ export default {
           skillsWeight: this.criteriaWeights.skills
         };
 
-        await axios.post('http://localhost:9090/api/jobs/create', jobToSave, {
+        await axios.post('http://localhost:9091/api/jobs/create', jobToSave, {
           headers: {
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json'
@@ -339,7 +339,7 @@ export default {
           return;
         }
 
-        const response = await axios.get(`http://localhost:9090/api/jobs/user/${username}`, {
+        const response = await axios.get(`http://localhost:9091/api/jobs/user/${username}`, {
           headers: {
             'Authorization': `Bearer ${authToken}`
           }
@@ -369,7 +369,7 @@ export default {
 
     exportToExcel() {
       const authToken = localStorage.getItem('authToken');
-      const url = 'http://localhost:9090/api/jobs/export';
+      const url = 'http://localhost:9091/api/jobs/export';
 
       // Trigger the file download
       window.location.href = `${url}?authToken=${authToken}`;

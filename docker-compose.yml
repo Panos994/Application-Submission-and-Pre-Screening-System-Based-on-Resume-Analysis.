@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Backend (Spring Boot)
+  backend:
+    image: openjdk:17
+    container_name: backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9092:9090"  # Exposing the backend port
+    volumes:
+      - ./data:/app/data  # Mounting the local folder for SQLite database persistence
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:sqlite:/app/data/job_prescreening_system.db
+    depends_on:
+      - frontend
+
+  # Frontend (Vue.js)
+  frontend:
+    image: node:16
+    container_name: frontend
+    build:
+      context: ./frontend/vue3-project-screening
+
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8080"  # Exposing the frontend port
+    #depends_on:
+      #- backend
+
+volumes:
+  data:
+
+
+
+    #docker ps for checking the containers and docker image ls for checking the images created (checked)
+    #use vagrant ssh,  are accessing the virtual machine (VM) created by Vagrant.
+    #Any commands I run while in this session will execute within the context of that VM.
+    #I can check my access to the VM by running commands like docker ps -a or ls to see if the expected directories and Docker containers are present.
+    # with vagrant up I am starting vagrant
+    #then I can run my playbook in my local folder of my project :
+    #

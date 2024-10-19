@@ -33,7 +33,7 @@
 
     <!-- Displaying the AI-based job match -->
     <!-- Updated AI-Assisted Job Matching section -->
-    <h3>Agent Smith Response:</h3>
+    <h3><em>Agent Smith Responses propose you the Top 3 best matching jobs to get high scores:</em></h3>
     <div style="max-width: 100%; overflow-x: auto;" v-if="aiResponseData" :class="{ 'typing-effect': showTyping }" v-html="aiResponseData"></div>
 
 
@@ -88,7 +88,7 @@ export default {
       const authToken = localStorage.getItem('authToken');
 
       try {
-        const response = await axios.post('http://localhost:9090/api/jobs/apply', formData, {
+        const response = await axios.post('http://localhost:9091/api/jobs/apply', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${authToken}`
@@ -133,7 +133,7 @@ export default {
       const authToken = localStorage.getItem('authToken');
 
       try {
-        const response = await axios.post('http://localhost:9090/api/match/match-candidate', formData, {
+        const response = await axios.post('http://localhost:9091/api/match/match-candidate', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${authToken}`
@@ -163,7 +163,7 @@ export default {
     async fetchJobs() {
       try {
         const authToken = localStorage.getItem('authToken');
-        const response = await axios.get('http://localhost:9090/api/jobs/all', {
+        const response = await axios.get('http://localhost:9091/api/jobs/all', {
           headers: {
             'Authorization': `Bearer ${authToken}`
           }

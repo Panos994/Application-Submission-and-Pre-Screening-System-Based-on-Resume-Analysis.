@@ -15,7 +15,8 @@ import LayoutPage from "@/components/LayoutPage.vue";
 import CandidateJobList from "@/components/CandidateJobList.vue"; // Import AdminPage
 
 // Set base URL for Axios
-axios.defaults.baseURL = 'http://localhost:9090';
+axios.defaults.baseURL = 'http://localhost:9091';
+
 
 // Define routes
 const routes = [

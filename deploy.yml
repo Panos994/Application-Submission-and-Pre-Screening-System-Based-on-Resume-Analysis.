@@ -1,0 +1,68 @@
+---
+- hosts: all
+  become: true  # Gain root privileges
+  tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install necessary dependencies for Docker
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
+        update_cache: yes
+
+    - name: Install Docker Compose
+      get_url:
+        url: "https://github.com/docker/compose/releases/latest/download/docker-compose-{{ ansible_system }}-{{ ansible_architecture }}"
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+
+
+
+
+    - name: Verify Docker is installed
+      command: docker --version
+
+    - name: Verify Docker Compose is installed
+      command: docker-compose --version
+
+    - name: Add user to the docker group
+      user:
+        name: "{{ ansible_user_id }}"
+        groups: docker
+        append: yes
+
+    - name: Copy docker-compose.yml to the server
+      copy:
+        src: ./docker-compose.yml
+        dest: /home/vagrant/docker-compose.yml
+
+    - name: Run Docker Compose
+      command: docker-compose up -d
+      args:
+        chdir: /home/vagrant
+
+

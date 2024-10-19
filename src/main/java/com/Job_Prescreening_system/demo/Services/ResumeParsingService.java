@@ -1,3 +1,4 @@
+
 package com.Job_Prescreening_system.demo.Services;
 
 
@@ -23,4 +24,7 @@ public class ResumeParsingService {
             return stripper.getText(document);
         }
     }
+
+
+
 }

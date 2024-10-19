@@ -3,6 +3,7 @@ package com.Job_Prescreening_system.demo.Services;
 import com.Job_Prescreening_system.demo.Entities.Job;
 import org.jboss.logging.Logger;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,8 +15,9 @@ public class GPTService {
 
     private static final Logger logger = Logger.getLogger(GPTService.class);
 
-    // API key should ideally be stored in a more secure manner
-    private final String API_KEY = "sk-_Ua3GA0KAB-mfh1FrCu495odipU_D4EYxzoXpba_MNT3BlbkFJ6IcybBmeBjrkO0SzG3Jab25Gd_I0gT0X1Y8S23DQ4A";
+    // OpenAI - API key inside application.properties
+    @Value("${ApiKey}")
+    private String API_KEY;
 
     public String analyzeResumeAndMatchJobs(String resumeText, List<Job> jobList) {
         if (API_KEY == null || API_KEY.isEmpty()) {
