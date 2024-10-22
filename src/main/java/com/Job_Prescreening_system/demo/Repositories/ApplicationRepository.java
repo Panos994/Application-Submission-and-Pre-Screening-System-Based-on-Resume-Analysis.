@@ -18,4 +18,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     // Define a method to find applications by jobId
     List<Application> findByJobId(Long jobId);
+
+
+
 }

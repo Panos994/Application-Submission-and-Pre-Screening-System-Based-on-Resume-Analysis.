@@ -49,4 +49,20 @@ public class ApplicationService {
                 .collect(Collectors.toList());
     }
 
+
+
+
+
+
+
+
+
+    //-----------------
+
+    public Application findById(Long id) {
+        return applicationRepository.findById(id).orElse(null);
+    }
+
+
+
 }

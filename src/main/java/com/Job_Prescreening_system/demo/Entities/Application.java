@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 @Entity
 @Table(name = "applications")
-
 public class Application {
 
 
@@ -73,5 +72,13 @@ public class Application {
     public void setCvFileName(String cvFileName) {
         this.cvFileName = cvFileName;
     }
+
+
+
+
+
+
+
+
 }
 

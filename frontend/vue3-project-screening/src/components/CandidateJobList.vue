@@ -85,7 +85,7 @@ export default {
     async fetchJobs() {
       try {
         const authToken = localStorage.getItem('authToken');
-        const response = await axios.get('http://localhost:9091/api/jobs/all', {
+        const response = await axios.get('http://localhost:9090/api/jobs/all', {
           headers: {
             'Authorization': `Bearer ${authToken}`
           }

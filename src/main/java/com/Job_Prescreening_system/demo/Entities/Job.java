@@ -2,6 +2,7 @@ package com.Job_Prescreening_system.demo.Entities;
 
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -23,6 +24,8 @@ public class Job {
     private Integer minExperience;
     private String educationLevel;
 
+
+    @JsonIgnore
     @OneToMany(mappedBy = "job")
     private Set<Application> applications;
 

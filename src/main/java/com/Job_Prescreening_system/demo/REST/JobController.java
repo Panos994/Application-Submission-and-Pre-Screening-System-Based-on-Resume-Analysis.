@@ -5,11 +5,15 @@ import com.Job_Prescreening_system.demo.Entities.Job;
 import com.Job_Prescreening_system.demo.Services.*;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
@@ -34,8 +38,12 @@ public class JobController {
     @Autowired
     private JobService jobService;
 
+
+    @Autowired
+    private MinioService minioService;
+
     // Apply for a job
-    @Secured("ROLE_USER")
+     @Secured("ROLE_USER")
     @PostMapping("/apply")
     public ResponseEntity<String> applyForJob(
             @RequestParam("resume") MultipartFile resumeFile,
@@ -43,6 +51,9 @@ public class JobController {
         try {
             // Parse the resume
             String parsedResume = resumeParsingService.parseResume(resumeFile);
+
+            // Upload the file to MinIO
+            String minioUrl = minioService.uploadFile(resumeFile);
 
             // Get the job by its ID
             Job job = jobService.getJobById(jobId);
@@ -59,11 +70,11 @@ public class JobController {
             // Calculate match score
             double matchScore = scoringService.calculateMatchScore(parsedResume, jobRequirements, job);
 
-            // Save the application with the score
+            // Save the application with the score and MinIO file URL
             Application application = new Application();
             application.setJob(job);
             application.setMatchScore(matchScore);
-            application.setCvFileName(resumeFile.getOriginalFilename());
+            application.setCvFileName(minioUrl); // Store the URL from MinIO
             applicationService.saveApplication(application);
 
             // Update job with the new top application
@@ -72,11 +83,9 @@ public class JobController {
             // Return the score and success message
             return ResponseEntity.ok("Your resume scored: " + matchScore + " points!");
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to parse resume: " + e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+                    .body("Failed to submit application: " + e.getMessage());
         }
     }
 
@@ -187,6 +196,12 @@ public class JobController {
         }
         return ResponseEntity.ok(jobs);
     }
+
+
+
+
+
+
 
 
 

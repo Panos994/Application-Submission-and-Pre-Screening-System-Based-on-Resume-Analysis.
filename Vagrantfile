@@ -15,8 +15,8 @@ Vagrant.configure("2") do |config|
   end
 
   # Forward the ports for frontend and backend
-  config.vm.network "forwarded_port", guest: 8080, host: 8083
-  config.vm.network "forwarded_port", guest: 9090, host: 9093
+  config.vm.network "forwarded_port", guest: 8082, host: 8082
+  config.vm.network "forwarded_port", guest: 9090, host: 9090
 
   # Define VM resources
   config.vm.provider "virtualbox" do |vb|

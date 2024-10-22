@@ -38,7 +38,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:8081");
+        configuration.addAllowedOrigin("http://localhost:8081"); //for my local IDE
+        configuration.addAllowedOrigin("http://localhost:8082"); // For Docker
+        configuration.addAllowedOrigin("http://localhost:9000"); // MinIO instance, if applicable
+        configuration.addAllowedOrigin("http://localhost:9001"); // MinIO instance, if applicable
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
@@ -60,6 +63,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/jobs/**").permitAll()
                         .requestMatchers("/api/match/**").permitAll()
                         .requestMatchers("/api/user").permitAll()
+                        .requestMatchers("/api/applications").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/v2/api-docs/**",

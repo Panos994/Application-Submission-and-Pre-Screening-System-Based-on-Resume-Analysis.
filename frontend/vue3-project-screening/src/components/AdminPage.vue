@@ -10,7 +10,6 @@
 
 
 
-
         <div class="form-group">
           <label for="title">Title:</label>
           <input type="text" v-model="job.title" required class="input-field" />
@@ -153,7 +152,10 @@
 
 
     <div class="job-list-container">
+
       <h2>Job List</h2>
+
+      <router-link to="/applications">Find and Download CVs through Candidates CV Files</router-link>
       <table class="job-table">
         <thead>
         <tr>
@@ -215,6 +217,10 @@
       </table>
       <button @click="exportToExcel" class="export-button">Export to Excel</button>
     </div>
+
+
+
+
   </div>
 </template>
 
@@ -285,7 +291,7 @@ export default {
           skillsWeight: this.criteriaWeights.skills
         };
 
-        await axios.post('http://localhost:9091/api/jobs/create', jobToSave, {
+        await axios.post('http://localhost:9090/api/jobs/create', jobToSave, {
           headers: {
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json'
@@ -339,7 +345,7 @@ export default {
           return;
         }
 
-        const response = await axios.get(`http://localhost:9091/api/jobs/user/${username}`, {
+        const response = await axios.get(`http://localhost:9090/api/jobs/user/${username}`, {
           headers: {
             'Authorization': `Bearer ${authToken}`
           }
@@ -369,7 +375,7 @@ export default {
 
     exportToExcel() {
       const authToken = localStorage.getItem('authToken');
-      const url = 'http://localhost:9091/api/jobs/export';
+      const url = 'http://localhost:9090/api/jobs/export';
 
       // Trigger the file download
       window.location.href = `${url}?authToken=${authToken}`;

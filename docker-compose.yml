@@ -9,13 +9,13 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "9092:9090"  # Exposing the backend port
+      - "9090:9090"  # Exposing the backend port
     volumes:
       - ./data:/app/data  # Mounting the local folder for SQLite database persistence
     environment:
       SPRING_DATASOURCE_URL: jdbc:sqlite:/app/data/job_prescreening_system.db
-    depends_on:
-      - frontend
+    #depends_on:
+    #  - frontend
 
   # Frontend (Vue.js)
   frontend:
@@ -34,11 +34,21 @@ volumes:
   data:
 
 
+    #Firstly, I will check the version docker --version, docker compose --version in my machine
 
     #docker ps for checking the containers and docker image ls for checking the images created (checked)
+    #docker-compose build για να κανω build τα images μου εκει που βρισκεται το docker-compose.yml αρχειο μου
+
+
+
     #use vagrant ssh,  are accessing the virtual machine (VM) created by Vagrant.
     #Any commands I run while in this session will execute within the context of that VM.
     #I can check my access to the VM by running commands like docker ps -a or ls to see if the expected directories and Docker containers are present.
     # with vagrant up I am starting vagrant
-    #then I can run my playbook in my local folder of my project :
-    #
+    #then I can run my playbook in my local folder of my project
+    #Access the Applications:
+  #
+  #Οταν τα services είναι up, εχω access  μέσω:
+  #
+  #    Frontend (Vue.js): Open http://localhost:8082/
+  #    Backend (Spring Boot): Open http://localhost:9092/

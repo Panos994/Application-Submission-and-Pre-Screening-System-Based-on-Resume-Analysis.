@@ -13,9 +13,9 @@ import AdminPage from './components/AdminPage.vue';
 import AdminUserManagement from "@/components/AdminUserManagement.vue";
 import LayoutPage from "@/components/LayoutPage.vue";
 import CandidateJobList from "@/components/CandidateJobList.vue"; // Import AdminPage
-
+import ApplicationsPage from '@/components/ViewApplicationsCV.vue';
 // Set base URL for Axios
-axios.defaults.baseURL = 'http://localhost:9091';
+axios.defaults.baseURL = 'http://localhost:9090';
 
 
 // Define routes
@@ -23,18 +23,27 @@ const routes = [
     {
         path: '/',
         component: LayoutPage,
-            children: [
-                {path: '', name: 'HomePage', component: HomePage},
-                {path: '/job-application', name: 'JobApplication', component: JobApplication},
-                {path: '/login', name: 'LoginPage', component: LoginPage},
-                {path: '/signup', name: 'SignUpPage', component: SignUpPage},
-                {path: '/admin', name: 'AdminPage', component: AdminPage}, // Add route for AdminPage
+        children: [
+            {path: '', name: 'HomePage', component: HomePage},
+            {path: '/job-application', name: 'JobApplication', component: JobApplication},
+            {path: '/login', name: 'LoginPage', component: LoginPage},
+            {path: '/signup', name: 'SignUpPage', component: SignUpPage},
+            {path: '/admin', name: 'AdminPage', component: AdminPage}, // Add route for AdminPage
 
-                {path: '/adminUserManagement', name: 'AdminUserManagement', component: AdminUserManagement},
+            {path: '/adminUserManagement', name: 'AdminUserManagement', component: AdminUserManagement},
 
-                {path: '/CandidateJobList', name: 'CandidateJobList', component: CandidateJobList}, // Add route for AdminPage
-           ]
-     }
+            {path: '/CandidateJobList', name: 'CandidateJobList', component: CandidateJobList}, // Add route for AdminPage
+
+
+            {
+                path: '/applications',
+                component: ApplicationsPage,
+            },
+
+
+
+        ]
+    }
 ];
 
 // Create router instance
