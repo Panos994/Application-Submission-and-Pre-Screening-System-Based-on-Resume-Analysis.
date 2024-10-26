@@ -6,8 +6,8 @@
 #ENTRYPOINT ["java", "-jar", "/app.jar"]
 
 # Use the OpenJDK base image
-FROM openjdk:17
-
+FROM openjdk:21-rc-oracle
+MAINTAINER foteinopoulos
 # Set the working directory
 WORKDIR /app
 

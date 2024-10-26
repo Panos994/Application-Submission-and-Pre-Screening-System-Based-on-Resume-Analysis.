@@ -1,54 +1,81 @@
-version: '3.8'
+version: '3.8'  # Ensure you use a version that suits your needs
 
 services:
-  # Backend (Spring Boot)
-  backend:
-    image: openjdk:17
-    container_name: backend
+  db:
+    image: postgres:14
+    expose:
+      - 5432
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: pass123
+      POSTGRES_DB: screeningdb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dbuser"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+      - dslabdb:/var/lib/postgresql/data/
+
+  spring:
+    image: sp  # Change this to your specific image if needed
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: nonroot.Dockerfile
     ports:
-      - "9090:9090"  # Exposing the backend port
-    volumes:
-      - ./data:/app/data  # Mounting the local folder for SQLite database persistence
+      - "9090:9090"
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:sqlite:/app/data/job_prescreening_system.db
-    #depends_on:
-    #  - frontend
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/screeningdb
+      SPRING_DATASOURCE_USERNAME: dbuser
+      SPRING_DATASOURCE_PASSWORD: pass123
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/actuator/health"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+      - dslabdb:/app/data  # Assuming you want to mount a volume here, adjust path as necessary
 
-  # Frontend (Vue.js)
   frontend:
-    image: node:16
-    container_name: frontend
     build:
-      context: ./frontend/vue3-project-screening
-
-      dockerfile: Dockerfile
+      context: ./frontend/vue3-project-screening  # Adjust this path as needed
+      dockerfile: Dockerfile  # Specify Dockerfile name if needed
     ports:
-      - "8082:8080"  # Exposing the frontend port
-    #depends_on:
-      #- backend
+      - "8080:80" #now frontend listens in localhost:8080
+    depends_on:
+      spring:
+        condition: service_healthy
 
 volumes:
-  data:
-
-
-    #Firstly, I will check the version docker --version, docker compose --version in my machine
-
-    #docker ps for checking the containers and docker image ls for checking the images created (checked)
-    #docker-compose build για να κανω build τα images μου εκει που βρισκεται το docker-compose.yml αρχειο μου
+  dslabdb:  # Define the named volume here
 
 
 
-    #use vagrant ssh,  are accessing the virtual machine (VM) created by Vagrant.
-    #Any commands I run while in this session will execute within the context of that VM.
-    #I can check my access to the VM by running commands like docker ps -a or ls to see if the expected directories and Docker containers are present.
-    # with vagrant up I am starting vagrant
-    #then I can run my playbook in my local folder of my project
-    #Access the Applications:
+
+  # It worked until now backend, db, frontend
+  # (Also in order to use the port 5432 for db I need first If I run locally the project to sudo systemctl stop postgresql)
+  # Issues pending to fix: minio, parsing tika that cannot be find in maven repository - now I need to comment tika dependency and relevant classes
+  # assessible in frontend through: http://localhost:8080
   #
-  #Οταν τα services είναι up, εχω access  μέσω:
+  #docker-compose up --build
   #
-  #    Frontend (Vue.js): Open http://localhost:8082/
-  #    Backend (Spring Boot): Open http://localhost:9092/
+  #
+  #
+  #
+  #
+  #
+  #
+  #if it does not find the dbuser for db in docker:
+  # I can connect to the database: docker exec -it application-submission-and-pre-screening-system-based-on-resume-analysis-db-1 psql -U dbuser -d screeningdb
+  #
+  #useful commands if I am inside postgresql command line
+  #\du          -- List roles
+  #\l           -- List databases
+  #CREATE USER dbuser WITH PASSWORD 'pass123';
+  #CREATE DATABASE screeningdb;
+  #GRANT ALL PRIVILEGES ON DATABASE screeningdb TO dbuser;

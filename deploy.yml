@@ -1,7 +1,14 @@
 ---
 - hosts: all
   become: true  # Gain root privileges
+  gather_facts: yes
   tasks:
+    - name: Gather facts
+      setup:
+    - name: Debug gathered facts
+      debug:
+        var: ansible_facts
+
     - name: Update and upgrade apt packages
       apt:
         update_cache: yes
@@ -35,12 +42,9 @@
 
     - name: Install Docker Compose
       get_url:
-        url: "https://github.com/docker/compose/releases/latest/download/docker-compose-{{ ansible_system }}-{{ ansible_architecture }}"
+        url: "https://github.com/docker/compose/releases/latest/download/docker-compose-{{ ansible_os | default('linux') | lower }}-{{ ansible_architecture | default('x86_64') }}"
         dest: /usr/local/bin/docker-compose
         mode: '0755'
-
-
-
 
 
     - name: Verify Docker is installed
@@ -64,5 +68,3 @@
       command: docker-compose up -d
       args:
         chdir: /home/vagrant
-
-

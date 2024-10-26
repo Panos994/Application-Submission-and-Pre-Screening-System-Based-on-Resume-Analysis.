@@ -39,7 +39,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:8081"); //for my local IDE
-        configuration.addAllowedOrigin("http://localhost:8082"); // For Docker
+        configuration.addAllowedOrigin("http://localhost:8080"); // For Docker
         configuration.addAllowedOrigin("http://localhost:9000"); // MinIO instance, if applicable
         configuration.addAllowedOrigin("http://localhost:9001"); // MinIO instance, if applicable
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
@@ -64,6 +64,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/match/**").permitAll()
                         .requestMatchers("/api/user").permitAll()
                         .requestMatchers("/api/applications").permitAll()
+                        .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/v2/api-docs/**",
