@@ -54,7 +54,7 @@
 
 		<!--Apache Tika for PDF parsing-->
 
-		<dependency>
+		<!--dependency>
 			<groupId>org.apache.tika</groupId>
 			<artifactId>tika-core</artifactId>
 			<version>2.7.0</version>
@@ -63,7 +63,7 @@
 			<groupId>org.apache.tika</groupId>
 			<artifactId>tika-parsers</artifactId>
 			<version>2.7.0</version>
-		</dependency>
+		</dependency-->
 
 		<!-- - -->
 

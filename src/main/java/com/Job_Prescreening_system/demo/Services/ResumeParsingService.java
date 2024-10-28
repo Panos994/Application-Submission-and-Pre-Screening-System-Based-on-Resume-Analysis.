@@ -2,8 +2,8 @@
 package com.Job_Prescreening_system.demo.Services;
 
 
-import org.apache.tika.Tika;
-import org.apache.tika.exception.TikaException;
+//import org.apache.tika.Tika;
+//import org.apache.tika.exception.TikaException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

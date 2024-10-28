@@ -4,7 +4,9 @@ package com.Job_Prescreening_system.demo.REST;
 import com.Job_Prescreening_system.demo.Entities.Job;
 import com.Job_Prescreening_system.demo.Services.GPTService;
 import com.Job_Prescreening_system.demo.Services.JobService;
-import org.apache.tika.Tika;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
+//import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +29,14 @@ public class JobMatchingControllerGPT {
     @Secured("ROLE_USER")
     @PostMapping("/match-candidate")
     public ResponseEntity<String> matchCandidate(@RequestParam("resume") MultipartFile resumeFile) {
-        try {
-            // Extract text from resume using Apache Tika
-            String resumeText = new Tika().parseToString(resumeFile.getInputStream());
+        try (PDDocument document = PDDocument.load(resumeFile.getInputStream())) {
+            // Extract text from resume using PDFBox
+            String resumeText = new PDFTextStripper().getText(document);
 
             // Get list of jobs from the job service
             List<Job> jobList = jobService.getAllJobs();
 
-            // Analyze the resume text using GPT to find the top 3 job matches
+            // Analyze the resume text using GPT to find the top matches
             String bestMatches = gptService.analyzeResumeAndMatchJobs(resumeText, jobList);
 
             return ResponseEntity.ok(bestMatches);
