@@ -1,70 +1,45 @@
 ---
 - hosts: all
-  become: true  # Gain root privileges
-  gather_facts: yes
+  become: yes
   tasks:
-    - name: Gather facts
-      setup:
-    - name: Debug gathered facts
-      debug:
-        var: ansible_facts
-
-    - name: Update and upgrade apt packages
+    - name: Install basic packages
       apt:
-        update_cache: yes
-        upgrade: dist
-
-    - name: Install necessary dependencies for Docker
-      apt:
-        name: "{{ item }}"
+        name: "{{item}}"
         state: present
-      with_items:
+        update_cache: true
+      loop:
+        - software-properties-common
+        - curl
         - apt-transport-https
         - ca-certificates
-        - curl
-        - software-properties-common
 
-    - name: Add Docker GPG key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
+    - name: get key
+      shell: "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -"
+      #ignore_errors: yes
 
-    - name: Add Docker repository
+    - name: Add docker ppa
       apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
-        state: present
-
-    - name: Install Docker
-      apt:
-        name: docker-ce
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
         state: present
         update_cache: yes
 
-    - name: Install Docker Compose
-      get_url:
-        url: "https://github.com/docker/compose/releases/latest/download/docker-compose-{{ ansible_os | default('linux') | lower }}-{{ ansible_architecture | default('x86_64') }}"
-        dest: /usr/local/bin/docker-compose
-        mode: '0755'
+    - name: install docker
+      apt:
+        name: "{{item}}"
+        state: present
+        update_cache: true
+      loop:
+        - docker-ce
+        - docker-compose
 
+    - name: start docker service
+      service:
+        name: docker
+        state: started
+        enabled: true
 
-    - name: Verify Docker is installed
-      command: docker --version
-
-    - name: Verify Docker Compose is installed
-      command: docker-compose --version
-
-    - name: Add user to the docker group
+    - name: adding existing user to group docker
       user:
         name: "{{ ansible_user_id }}"
         groups: docker
         append: yes
-
-    - name: Copy docker-compose.yml to the server
-      copy:
-        src: ./docker-compose.yml
-        dest: /home/vagrant/docker-compose.yml
-
-    - name: Run Docker Compose
-      command: docker-compose up -d
-      args:
-        chdir: /home/vagrant

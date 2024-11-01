@@ -1,3 +1,5 @@
+#nginx try frontend dockerfile (CORS issue)
+
 # Use the node image from official Docker Hub
 FROM node:20-alpine3.19 as build-stage
 # Set the working directory
@@ -11,14 +13,12 @@ COPY . .
 # Build the Vue.js application to the production mode
 RUN npm run build
 
-# Use a lightweight Node.js image to serve the application
-FROM node:20-alpine3.19 as production-stage
-WORKDIR /app
-# Copy the built application from the previous stage
-COPY --from=build-stage /app/dist ./dist
-# Install a simple server
-RUN npm install -g serve
-# Start the server
-CMD ["serve", "-s", "dist", "-l", "80"]
-# Expose the port (default is 3000 for serve)
+# Production Stage
+FROM nginx:alpine
+
+#Copy build to Nginx path
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+
+# Expose the port Nginx will listen on (this is used internally in Docker)
 EXPOSE 80

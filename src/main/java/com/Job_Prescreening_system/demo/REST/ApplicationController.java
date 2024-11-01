@@ -60,7 +60,7 @@ public class ApplicationController {
     private MinioService minioService;
     private static final Logger log = LoggerFactory.getLogger(ApplicationController.class);
     @GetMapping("/download/{id}")
-    public ResponseEntity<InputStreamResource> downloadResume(@PathVariable Long id) {
+    public ResponseEntity<?> downloadResume(@PathVariable Long id) {
         log.info("Attempting to download resume for application ID: {}", id);
 
         Application application = applicationService.findById(id);
@@ -69,27 +69,49 @@ public class ApplicationController {
             return ResponseEntity.notFound().build();
         }
 
-        // Extract the object key from the URL
+        // Extract the object key from the URL stored in the application
         String url = application.getCvFileName();
-        String objectName = url.substring(url.lastIndexOf("/") + 1); // This will get the object key
+        String objectName = url.substring(url.lastIndexOf("/") + 1);
 
         log.info("Fetching file from MinIO: {}", objectName);
 
         try {
+            // Attempt to retrieve the file directly
             InputStream inputStream = minioService.getFile(objectName);
             log.info("Successfully retrieved file: {}", objectName);
+
+            // Stream the file directly if successful
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + objectName + "\"");
+            headers.add(HttpHeaders.CONTENT_TYPE, "application/pdf");
+
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + objectName + "\"")
-                    .header(HttpHeaders.CONTENT_TYPE, "application/pdf") // or application/octet-stream if preferred
+                    .headers(headers)
                     .body(new InputStreamResource(inputStream));
-        } catch (IOException e) {
-            log.error("I/O error while downloading file: {}", objectName, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
         } catch (Exception e) {
-            log.error("Unexpected error while downloading file: {}", objectName, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            log.error("Error streaming file; falling back to presigned URL: {}", objectName, e);
+
+            try {
+                // Fallback: Generate a presigned URL if direct streaming fails
+                String presignedUrl = minioService.generatePresignedUrl(objectName);
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Content-Disposition", "attachment; filename=\"" + objectName + "\"");
+
+                return ResponseEntity.ok()
+                        .headers(headers)
+                        .body(presignedUrl);
+
+            } catch (Exception ex) {
+                log.error("Failed to generate presigned URL: {}", objectName, ex);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error generating download link");
+            }
         }
     }
+
+
+
 
 
 

@@ -3,6 +3,7 @@ package com.Job_Prescreening_system.demo.Services;
 import com.Job_Prescreening_system.demo.REST.ApplicationController;
 import io.minio.*;
 import io.minio.errors.MinioException;
+import io.minio.http.Method;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,4 +79,39 @@ public class MinioService {
             throw e; // Rethrow to catch in the controller
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public String generatePresignedUrl(String fileName) throws Exception {
+        try {
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .bucket(bucketName)
+                            .object(fileName)
+                            .method(Method.GET)
+                            .expiry(60 * 60) // URL expires in 1 hour
+                            .build()
+            );
+        } catch (MinioException e) {
+            log.error("Error generating presigned URL: {}", e.getMessage());
+            throw new Exception("Could not generate presigned URL", e);
+        }
+    }
+
+
+
+
 }
