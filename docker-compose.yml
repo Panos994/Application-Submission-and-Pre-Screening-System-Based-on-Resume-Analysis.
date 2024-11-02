@@ -85,3 +85,38 @@ services:
 volumes:
   dslabdb:
   minio_data:
+
+
+
+
+
+
+
+  # It worked until now backend, db, frontend
+  # (Also in order to use the port 5432 for db I need first If I run locally the project to sudo systemctl stop postgresql)
+  #
+  # assessible in frontend through: http://localhost:8080
+  #also sudo systemctl stop postgresql (that is running in for my local machine)
+  #docker-compose up --build
+  #docker compose down
+  #
+  #
+  #
+  #
+  #
+  #
+  #if it does not find the dbuser for db in docker:
+  # I can connect to the database: docker exec -it application-submission-and-pre-screening-system-based-on-resume-analysis-db-1 psql -U dbuser -d screeningdb
+  #
+  #useful commands if I am inside postgresql command line
+  #\du          -- List roles
+  #\l           -- List databases
+  #CREATE USER dbuser WITH PASSWORD 'pass123';
+  #CREATE DATABASE screeningdb;
+  #GRANT ALL PRIVILEGES ON DATABASE screeningdb TO dbuser;
+  #
+  #
+  #
+  #
+  #Pending: i)creation of ansible playboor for docker, docker-compose
+  #ii)with use of vagrant
