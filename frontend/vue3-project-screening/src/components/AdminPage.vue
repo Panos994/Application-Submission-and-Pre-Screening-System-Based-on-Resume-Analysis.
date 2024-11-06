@@ -13,27 +13,67 @@
         <div class="form-group">
           <label for="title">Title:</label>
           <input type="text" v-model="job.title" required class="input-field" />
+
         </div>
 
 
-        <div class="form-group">
-          <label for="location">Location:</label>
-          <input type="text" v-model="job.location" required class="input-field" />
-        </div>
 
-        <div class="form-group">
-          <label for="sector">Department:</label>
-          <input type="text" v-model="job.sector" required class="input-field" />
-        </div>
+<!-- --here -->
+        <v-form>
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-autocomplete
+                  v-model="job.location"
+                  :items="locations"
+                  label="Location"
+                  required
+              ></v-autocomplete>
+            </v-col>
+
+            <v-col cols="12" md="6">
+              <v-autocomplete
+                  v-model="job.sector"
+                  :items="sectors"
+                  label="Segment"
+                  required
+              ></v-autocomplete>
+            </v-col>
+          </v-row>
+        </v-form>
+
+
+
+
 
         <div class="form-group">
           <label for="workType">Type of Employment:</label>
-          <input type="text" v-model="job.workType" required class="input-field" />
+          <input type="text" v-model="job.workType" list="workTypeList" required class="input-field" />
+          <datalist id="workTypeList">
+            <option value="Full Time - On site"></option>
+            <option value="Part Time - On site"></option>
+            <option value="Full Time - Hybrid"></option>
+            <option value="Part Time - Hybrid"></option>
+            <option value="Full Time - Remote"></option>
+            <option value="Part Time - Remote"></option>
+          </datalist>
         </div>
 
         <div class="form-group">
           <label for="jobLevel">Level of position:</label>
-          <input type="text" v-model="job.jobLevel" required class="input-field" />
+          <input type="text" v-model="job.jobLevel" list="jobLevelList" required class="input-field" />
+
+          <datalist id="jobLevelList">
+            <option value="Junior Level"></option>
+            <option value="Mid Level"></option>
+            <option value="Senior Level"></option>
+            <option value="Mid-Senior Level"></option>
+            <option value="Associate"></option>
+            <option value="Specialist"></option>
+            <option value="Manager"></option>
+            <option value="Associate Manager"></option>
+            <option value="Senior Manager"></option>
+            <option value="Lead"></option>
+          </datalist>
         </div>
 
 
@@ -244,6 +284,12 @@ export default {
         educationLevels: [], // Array to store multiple selections
         universityPreferences: []
       },
+      locations: ['Athens', 'Thessaloniki', 'Heraklion', 'Patras'], // Adjust or extend this list as needed
+      sectors: [
+        'Information Technology', 'Engineering', 'Software Engineering', 'Marketing',
+        'Operations', 'DevOps', 'Finance', 'HR', 'Talent Acquisition', 'Sales',
+        'Consulting', 'Accounting'
+      ],
       criteriaWeights: {
         minExperience: 0,
         education: 0,
@@ -254,6 +300,15 @@ export default {
     };
   },
   methods: {
+
+    checkLocation() {
+      console.log('Current location input:', this.job.location);
+    },
+    checkSector() {
+      console.log('Current sector input:', this.job.sector);
+    },
+
+
 
 
     async submitJob() {
@@ -390,79 +445,86 @@ export default {
 <style scoped>
 .container {
   display: flex;
-  justify-content: space-between;
-  padding: 20px;
+  gap: 10px;
+  padding: 10px;
 }
 
-.form-container,
+.form-container {
+  flex: 0.2; /* Reduce width further */
+  min-width: 0;
+  margin: 5px;
+  padding: 10px; /* Smaller padding for compactness */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
 .job-list-container {
-  flex: 1;
-  margin: 10px;
-  padding: 20px;
+  flex: 1.4; /* Increase width to prioritize job list */
+  min-width: 0;
+  margin: 5px;
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
 }
 
 h1, h2 {
   color: #333;
+  font-size: 1.2em; /* Smaller heading font size */
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 8px; /* Reduce space between form fields */
 }
 
 label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
   font-weight: bold;
+  font-size: 0.85em; /* Smaller font for labels */
 }
 
 .input-field,
 .textarea-field,
 .select-field {
   width: 100%;
-  padding: 10px;
+  padding: 6px; /* Smaller padding to shrink field size */
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+  font-size: 0.9em; /* Slightly smaller font size for inputs */
 }
 
 .textarea-field {
-  height: 100px;
+  height: 70px;
 }
 
-.checkbox-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.error-message {
-  color: red;
-  margin-top: 10px;
-}
-
-.submit-button, .export-button {
+.submit-button,
+.export-button {
   background-color: #28a745;
   color: white;
-  padding: 10px 15px;
+  padding: 6px 10px; /* Smaller padding for buttons */
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 0.85em; /* Smaller button font size */
 }
 
-.submit-button:hover, .export-button:hover {
+.submit-button:hover,
+.export-button:hover {
   background-color: #218838;
 }
 
 .job-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  margin-top: 15px;
+  font-size: 0.8em; /* Smaller font for table content */
 }
 
-.job-table th, .job-table td {
+.job-table th,
+.job-table td {
   border: 1px solid #ccc;
-  padding: 10px;
+  padding: 5px; /* Smaller padding to reduce cell size */
   text-align: left;
 }
 

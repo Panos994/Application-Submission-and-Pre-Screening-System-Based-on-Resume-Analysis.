@@ -40,6 +40,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:8081"); //for my local IDE
         configuration.addAllowedOrigin("http://localhost:8080"); // For Docker
+        configuration.addAllowedOrigin("http://localhost:8082"); // For Docker
         configuration.addAllowedOrigin("http://localhost:9000"); // MinIO instance, if applicable
         configuration.addAllowedOrigin("http://localhost:9001"); // MinIO instance, if applicable
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

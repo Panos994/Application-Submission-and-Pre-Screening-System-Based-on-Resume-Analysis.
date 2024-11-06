@@ -3,7 +3,7 @@
 <template>
   <div>
     <br>  <br>
-    <center><router-link to="/CandidateJobList">Check Our Available Job Positions</router-link></center>
+    <center><button class="buttonJobAvailaibility"><router-link to="/CandidateJobList">Check Our Available Job Positions</router-link></button></center>
     <h1>Apply for a Job</h1>
 
     <!-- Manual Job Selection and Submission -->
@@ -234,7 +234,7 @@ select, input[type="file"] {
 }
 
 button {
-  width: 100%;
+  width: 20%;
   padding: 0.75rem;
   background-color: #0073b1;
   color: white;
@@ -297,6 +297,40 @@ a:hover {
   text-decoration: underline;
 }
 
+
+
+
+
+
+
+
+.buttonJobAvailaibility{
+  width: 30%;
+  padding: 0.75rem;
+  background-color: #0073b1;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+
+
+
+button:hover {
+  background-color: #ffffff;
+}
+
+
+
+a {
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+}
 
 
 </style>

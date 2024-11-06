@@ -37,3 +37,6 @@
         name: "{{ ansible_user_id }}"
         groups: docker
         append: yes
+
+
+#ansible-playbook -i inventory.ini deploy.yml
