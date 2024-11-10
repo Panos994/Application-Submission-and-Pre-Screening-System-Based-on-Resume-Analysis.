@@ -6,9 +6,8 @@
       <div class="sidebar-links">
         <router-link to="/about" class="sidebar-link">About</router-link>
         <router-link to="/more" class="sidebar-link">More</router-link>
-        <br><br><br><br><br><br><br> <br><br><br><br><br><br><br>
-        <button class="logout-btn" @click="logout">Log Out</button>
       </div>
+      <button class="logout-btn" @click="logout">Log out also from here</button>
     </div>
 
     <!-- Main Content Area -->
@@ -67,6 +66,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  flex-grow: 1; /* Takes available vertical space */
 }
 
 .sidebar-link {
@@ -78,6 +78,22 @@ export default {
 
 .sidebar-link:hover {
   text-decoration: underline;
+}
+
+/* Position the logout button at the bottom */
+.logout-btn {
+  background-color: #0073b1;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: auto; /* Pushes the button to the bottom */
+}
+
+.logout-btn:hover {
+  background-color: #005a8c;
 }
 
 /* Main Content Styling */
@@ -111,18 +127,5 @@ export default {
 .home-link:hover, .navbar a:hover {
   text-decoration: underline;
 }
-
-.logout-btn {
-  background-color: #0073b1;
-  color: white;
-  padding: 8px 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.logout-btn:hover {
-  background-color: #005a8c;
-}
 </style>
+

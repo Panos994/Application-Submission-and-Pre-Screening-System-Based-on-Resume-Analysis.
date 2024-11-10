@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vue-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vue-frontend
+  template:
+    metadata:
+      labels:
+        app: vue-frontend
+    spec:
+      containers:
+        - name: vue-frontend
+          image: ghcr.io/panos994/application-submission-and-pre-screening-system-based-on-resume-frontend:latest
+          ports:
+            - containerPort: 80
+      imagePullSecrets:
+        - name: github-registry-secret  # Add  line to use the secret
+
+
+
+#for the ImagePullSecrets
+#(base) ➜  k3s git:(master) ✗ kubectl create secret docker-registry github-registry-secret \
+#  --docker-server=ghcr.io \
+#  --docker-username=panos994 \
+#  --docker-password=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 \
+#  --docker-email=it2021154 \
+#  --kubeconfig  /home/it2021154/Desktop/DraftJobSystem/Application-Submission-and-Pre-Screening-System-Based-on-Resume-Analysis./k3s/k3s.yaml
+#
+#secret/github-registry-secret created
+
+
+
+
+#for running the pod
+#kubectl apply -f frontend/deployment.yaml

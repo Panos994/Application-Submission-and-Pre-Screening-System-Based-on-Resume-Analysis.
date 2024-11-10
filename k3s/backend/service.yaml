@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-backend
+spec:
+  ports:
+    - port: 9090
+      targetPort: 9090
+  selector:
+    app: spring-backend
+  type: ClusterIP

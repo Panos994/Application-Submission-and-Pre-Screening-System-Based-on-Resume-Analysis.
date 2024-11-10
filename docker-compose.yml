@@ -1,3 +1,5 @@
+#docker-compose.yaml
+
 version: '3.8'
 
 services:
@@ -50,7 +52,7 @@ services:
       context: ./frontend/vue3-project-screening
       dockerfile: Dockerfile
     ports:
-      - "8080:80"
+      - "8082:80"
     depends_on:
       spring:
         condition: service_healthy
@@ -118,5 +120,5 @@ volumes:
   #
   #
   #
-  #Pending: i)creation of ansible playboor for docker, docker-compose
-  #ii)with use of vagrant
+  #
+  #

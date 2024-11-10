@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-backend
+  template:
+    metadata:
+      labels:
+        app: spring-backend
+    spec:
+      containers:
+        - name: spring-backend
+          image: ghcr.io/panos994/application-submission-and-pre-screening-system-based-on-resume-analysis/backend:1.0
+          ports:
+            - containerPort: 9090
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/screeningdb"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "dbuser"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "pass123"
+            - name: MINIO_URL
+              value: "http://minio:9000"
+            - name: MINIO_ACCESS_KEY
+              value: "newusername"
+            - name: MINIO_SECRET_KEY
+              value: "newpassword"
+      imagePullSecrets:
+        - name: github-registry-secret  # Add  line to use the secret
+
+
+
+
+#for the ImagePullSecrets
+#(base) ➜  k3s git:(master) ✗ kubectl create secret docker-registry github-registry-secret \
+#  --docker-server=ghcr.io \
+#  --docker-username=panos994 \
+#  --docker-password=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 \
+#  --docker-email=it2021154 \
+#  --kubeconfig  /home/it2021154/Desktop/DraftJobSystem/Application-Submission-and-Pre-Screening-System-Based-on-Resume-Analysis./k3s/k3s.yaml
+#
+#secret/github-registry-secret created
+
+
+#for running the pod
+#kubectl apply -f backend/deployment.yaml
