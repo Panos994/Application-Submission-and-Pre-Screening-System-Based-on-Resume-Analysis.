@@ -3,9 +3,26 @@ kind: Service
 metadata:
   name: vue-frontend
 spec:
-  ports:
-    - port: 80
-      targetPort: 80
   selector:
     app: vue-frontend
-  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 80       # Internal Kubernetes port
+      targetPort: 80  # Port the container is listening on
+      nodePort: 30081 # External port to access the service
+  type: NodePort     # Expose the service to the outside world
+
+
+
+
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: vue-frontend
+#spec:
+#  ports:
+#    - port: 80
+#      targetPort: 80
+#  selector:
+#    app: vue-frontend
+#  type: ClusterIP..
