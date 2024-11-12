@@ -3,9 +3,11 @@ kind: Service
 metadata:
   name: spring-backend
 spec:
-  ports:
-    - port: 9090
-      targetPort: 9090
   selector:
     app: spring-backend
-  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 9090
+      nodePort: 30090  # Choose a port on the VM to expose externally
+  type: NodePort
