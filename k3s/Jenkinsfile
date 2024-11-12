@@ -41,7 +41,7 @@ pipeline {
 
                 // Ensure backend deployment exists, or create it if it doesn't
                 script {
-                    def backendDeploymentExists = sh(script: "kubectl get deployment backend -o name", returnStatus: true) == 0
+                    def backendDeploymentExists = sh(script: "kubectl get deployment spring-backend -o name", returnStatus: true) == 0
                     if (!backendDeploymentExists) {
                         echo "Backend deployment not found, creating it."
                         // Create the backend deployment if it doesn't exist
@@ -50,8 +50,8 @@ pipeline {
                 }
 
                 // Set the images for the backend and frontend deployments
-                sh 'kubectl set image deployment/backend backend=$BACKEND_IMAGE'
-                sh 'kubectl set image deployment/frontend frontend=$FRONTEND_IMAGE'
+                sh 'kubectl set image deployment/spring-backend spring-backend=$BACKEND_IMAGE'
+                sh 'kubectl set image deployment/vue-frontend vue-frontend=$FRONTEND_IMAGE'
             }
         }
     }
