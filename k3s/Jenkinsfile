@@ -30,9 +30,11 @@ pipeline {
                 KUBECONFIG = '/etc/rancher/k3s/k3s.yaml' // Path to kubeconfig file on EC2 instance
             }
             steps {
-                // Applying database and MinIO manifests
-                sh 'kubectl apply -f /home/it2021154/Desktop/DraftJobSystem/Application-Submission-and-Pre-Screening-System-Based-on-Resume-Analysis/k3s/database'
-                sh 'kubectl apply -f /home/it2021154/Desktop/DraftJobSystem/Application-Submission-and-Pre-Screening-System-Based-on-Resume-Analysis/k3s/minio'
+                // Applying database and MinIO manifests using relative paths from the repository
+                sh 'kubectl apply -f k3s/database/deployment.yaml'
+                sh 'kubectl apply -f k3s/database/service.yaml'
+                sh 'kubectl apply -f k3s/minio'
+
                 // Apply the backend and frontend images from GitHub Packages
                 sh 'kubectl set image deployment/backend backend=$BACKEND_IMAGE'
                 sh 'kubectl set image deployment/frontend frontend=$FRONTEND_IMAGE'
