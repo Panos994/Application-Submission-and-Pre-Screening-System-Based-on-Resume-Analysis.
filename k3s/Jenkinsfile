@@ -1,20 +1,27 @@
 pipeline {
     agent any
     environment {
-        // Define the GitHub Package registry for backend and frontend images
         BACKEND_IMAGE = 'ghcr.io/panos994/application-submission-and-pre-screening-system-based-on-resume-analysis/backend:1.0'
         FRONTEND_IMAGE = 'ghcr.io/panos994/application-submission-and-pre-screening-system-based-on-resume-frontend:latest'
     }
     stages {
+        stage('Docker Login to GHCR') {
+            steps {
+                script {
+                    def github_username = "Panos994"
+                    def github_token = "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"
+                    // Log in to GHCR using the token and username
+                    sh "echo ${github_token} | docker login ghcr.io -u ${github_username} --password-stdin"
+                }
+            }
+        }
         stage('Pull Backend Image') {
             steps {
-                // Pull the backend image from GitHub Packages
                 sh 'docker pull $BACKEND_IMAGE'
             }
         }
         stage('Pull Frontend Image') {
             steps {
-                // Pull the frontend image from GitHub Packages
                 sh 'docker pull $FRONTEND_IMAGE'
             }
         }

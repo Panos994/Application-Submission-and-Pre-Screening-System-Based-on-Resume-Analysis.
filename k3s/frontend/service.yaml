@@ -9,7 +9,7 @@ spec:
     - protocol: TCP
       port: 80       # Internal Kubernetes port
       targetPort: 80  # Port the container is listening on
-      nodePort: 30081 # External port to access the service
+      nodePort: 30082 # External port to access the service
   type: NodePort     # Expose the service to the outside world
 
 
