@@ -6,6 +6,7 @@
       <div class="sidebar-links">
         <router-link to="/about" class="sidebar-link">About</router-link>
         <router-link to="/more" class="sidebar-link">More</router-link>
+        <router-link to="/info" class="sidebar-link">Info</router-link>
       </div>
       <button class="logout-btn" @click="logout">Log out also from here</button>
     </div>
@@ -43,11 +44,13 @@ export default {
 .layout {
   display: flex;
   height: 100vh;
+  overflow: hidden; /* Prevents page overflow */
 }
 
 /* Sidebar Styling */
 .sidebar {
   width: 150px;
+  min-width: 150px; /* Ensures sidebar doesn't shrink */
   background-color: #333;
   color: white;
   padding: 2rem 1rem;
@@ -98,7 +101,8 @@ export default {
 
 /* Main Content Styling */
 .main-content {
-  margin-left: 250px; /* Aligns content to the right of the sidebar */
+
+  margin-left: 150px; /* Sidebar width */
   flex: 1;
   padding: 2rem;
 }

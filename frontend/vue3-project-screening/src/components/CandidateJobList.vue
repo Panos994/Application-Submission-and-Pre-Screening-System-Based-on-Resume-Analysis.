@@ -116,7 +116,8 @@ export default {
 
 .form-container,
 .job-list-container {
-  flex: 1;
+  max-height: 400px; /* Adjust the height as needed */
+  overflow-y: auto;  /* Enables vertical scroll */
   margin: 10px;
   padding: 20px;
   border: 1px solid #ccc;

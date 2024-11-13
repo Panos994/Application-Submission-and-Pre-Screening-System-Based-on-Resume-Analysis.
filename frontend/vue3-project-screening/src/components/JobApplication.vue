@@ -273,9 +273,14 @@ pre {
 /* Typing Effect */
 .typing-effect {
   border-right: 2px solid rgba(0, 0, 0, 0.75);
-  white-space: nowrap;
+
   overflow: hidden;
   animation: typing 3.5s steps(40, end), blink 0.75s step-end infinite;
+
+
+  max-width: 100%; /* Ensure it doesn't overflow */
+  overflow-wrap: break-word; /* Wrap long words */
+  white-space: pre-wrap; /* Keeps formatting */
 }
 
 @keyframes typing {

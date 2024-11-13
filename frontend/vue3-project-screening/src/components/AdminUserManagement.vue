@@ -4,6 +4,7 @@
     <h1 class="text-3xl font-bold mb-6 custom-header"><center>Users</center></h1>
 
     <!-- Displaying users -->
+    <div class="table-container">
     <table class="w-full border border-gray-300 mt-4">
       <thead>
       <tr class="bg-gray-200">
@@ -53,6 +54,7 @@
       </tr>
       </tbody>
     </table>
+    </div>
   </div>
 
   <!--router-link to="/">Go to Homepage</router-link-->
@@ -160,6 +162,15 @@ export default {
 </script>
 
 <style scoped>
+
+.table-container {
+  max-height: 400px; /* Adjust the height as needed */
+  overflow-y: auto; /* Enables vertical scroll within the container */
+  border: 1px solid #ddd; /* Optional border for container */
+  border-radius: 8px; /* Optional rounded corners */
+  margin-top: 10px; /* Optional margin */
+}
+
 /* Styling for the table */
 table {
   width: 100%;

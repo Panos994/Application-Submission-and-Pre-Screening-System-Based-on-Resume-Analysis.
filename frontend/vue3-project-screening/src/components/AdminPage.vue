@@ -445,26 +445,28 @@ export default {
 <style scoped>
 .container {
   display: flex;
-  gap: 10px;
-  padding: 10px;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 100vh;
+  overflow: hidden;
 }
 
 .form-container {
-  flex: 0.2; /* Reduce width further */
-  min-width: 0;
-  margin: 5px;
-  padding: 10px; /* Smaller padding for compactness */
-  border: 1px solid #ccc;
+  padding: 20px;
+  max-height: 45vh; /* Adjust height to fit content and page layout */
+  overflow-y: auto;
+  border: 1px solid #ccc; /* Optional, for visual separation */
   border-radius: 8px;
+  background-color: #f9f9f9;
 }
 
 .job-list-container {
-  flex: 1.4; /* Increase width to prioritize job list */
-  min-width: 0;
-  margin: 5px;
-  padding: 10px;
-  border: 1px solid #ccc;
+  padding: 20px;
+  max-height: 45vh; /* Adjust height to fit content and page layout */
+  overflow-y: auto;
+  border: 1px solid #ccc; /* Optional, for visual separation */
   border-radius: 8px;
+  background-color: #f9f9f9;
 }
 
 h1, h2 {

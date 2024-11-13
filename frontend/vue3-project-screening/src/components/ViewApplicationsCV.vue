@@ -10,6 +10,9 @@
         class="search-input"
     />
 
+
+
+    <div class="table-container">
     <table class="job-table">
       <thead>
       <tr>
@@ -29,7 +32,7 @@
       </tr>
       </tbody>
     </table>
-
+    </div>
     <router-link to="/admin" class="back-link">Return Back to Job Postings Page</router-link>
   </div>
 </template>
@@ -113,6 +116,20 @@ export default {
   border: 1px solid #ccc;
   border-radius: 5px;
 }
+
+
+.table-container {
+  max-height: 400px; /* Set your desired max height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+
+
+
+
 
 .job-table {
   width: 100%;

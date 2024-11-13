@@ -25,6 +25,8 @@ import ApplicationsPage from '@/components/ViewApplicationsCV.vue';
 import AboutPage from '@/components/AboutPage.vue';
 import MorePage from '@/components/MorePage.vue';
 
+import InfoPage from '@/components/InfoPage.vue';
+
 
 
 
@@ -49,6 +51,7 @@ const routes = [
 
             { path: '/about', component: AboutPage },
             { path: '/more', component: MorePage },
+            { path: '/info', component: InfoPage }
 
 
         ]
