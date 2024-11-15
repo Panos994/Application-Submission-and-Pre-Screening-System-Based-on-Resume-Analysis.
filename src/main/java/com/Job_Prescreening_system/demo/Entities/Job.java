@@ -2,6 +2,7 @@ package com.Job_Prescreening_system.demo.Entities;
 
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -27,6 +28,7 @@ public class Job {
 
     @JsonIgnore
     @OneToMany(mappedBy = "job")
+    @JsonBackReference
     private Set<Application> applications;
 
     // Getters and setters
@@ -233,6 +235,7 @@ public class Job {
     }
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userid", nullable = false) // Link the job to the user who created it
+    @JsonIgnore
     private User user;
 
     // Getters and Setters

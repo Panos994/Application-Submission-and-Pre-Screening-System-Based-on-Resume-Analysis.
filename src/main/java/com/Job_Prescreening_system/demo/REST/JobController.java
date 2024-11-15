@@ -2,6 +2,8 @@ package com.Job_Prescreening_system.demo.REST;
 
 import com.Job_Prescreening_system.demo.Entities.Application;
 import com.Job_Prescreening_system.demo.Entities.Job;
+import com.Job_Prescreening_system.demo.Entities.User;
+import com.Job_Prescreening_system.demo.Repositories.UserRepository;
 import com.Job_Prescreening_system.demo.Services.*;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,13 +46,24 @@ public class JobController {
     @Autowired
     private MinioService minioService;
 
+
+
+    @Autowired
+    private UserRepository userRepository;
+
+
     // Apply for a job
-     @Secured("ROLE_USER")
+    @Secured("ROLE_USER")
     @PostMapping("/apply")
     public ResponseEntity<String> applyForJob(
             @RequestParam("resume") MultipartFile resumeFile,
-            @RequestParam("jobId") Long jobId) {
+            @RequestParam("jobId") Long jobId,
+            @AuthenticationPrincipal UserDetails userDetails) {
         try {
+            // Fetch the user from the username in the userDetails object
+            User user = userRepository.findByUsername(userDetails.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
             // Parse the resume
             String parsedResume = resumeParsingService.parseResume(resumeFile);
 
@@ -75,6 +90,7 @@ public class JobController {
             application.setJob(job);
             application.setMatchScore(matchScore);
             application.setCvFileName(minioUrl); // Store the URL from MinIO
+            application.setUser(user); // Set the user for this application
             applicationService.saveApplication(application);
 
             // Update job with the new top application

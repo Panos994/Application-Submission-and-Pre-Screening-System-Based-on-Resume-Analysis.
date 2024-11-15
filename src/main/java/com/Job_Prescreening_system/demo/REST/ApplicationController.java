@@ -1,4 +1,7 @@
 package com.Job_Prescreening_system.demo.REST;
+import com.Job_Prescreening_system.demo.Entities.Job;
+import com.Job_Prescreening_system.demo.Entities.User;
+import com.Job_Prescreening_system.demo.Repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.Job_Prescreening_system.demo.Entities.Application;
@@ -13,6 +16,8 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
@@ -22,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -111,6 +117,64 @@ public class ApplicationController {
     }
 
 
+
+
+
+
+//-----------
+
+    @PutMapping("/{id}/viewed")
+    public ResponseEntity<?> markAsViewed(@PathVariable Long id) {
+        Application updatedApplication = applicationService.updateApplicationStatus(id, "VIEWED", 2);
+        if (updatedApplication == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Application not found");
+        }
+        return ResponseEntity.ok(updatedApplication);
+    }
+
+    // You can also include a generic endpoint to update any status:
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam String status) {
+        Application updatedApplication = applicationService.updateApplicationStatus(id, status, null); // progress is optional
+        if (updatedApplication == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Application not found");
+        }
+        return ResponseEntity.ok(updatedApplication);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @Autowired
+    private UserRepository userRepository;
+
+
+    @GetMapping("/user")
+    public ResponseEntity<List<Application>> getApplicationsByUser(@AuthenticationPrincipal UserDetails userDetails) {
+        // Ensure the user is authenticated
+        if (userDetails == null || userDetails.getUsername() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Fetch the user's applications
+        List<Application> applications = applicationService.getApplicationsByCandidate(userDetails.getUsername());
+
+        if (applications.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        return ResponseEntity.ok(applications);
+    }
 
 
 

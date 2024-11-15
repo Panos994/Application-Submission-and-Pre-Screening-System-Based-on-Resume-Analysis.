@@ -1,7 +1,9 @@
 package com.Job_Prescreening_system.demo.Services;
 
 import com.Job_Prescreening_system.demo.Entities.Application;
+import com.Job_Prescreening_system.demo.Entities.User;
 import com.Job_Prescreening_system.demo.Repositories.ApplicationRepository;
+import com.Job_Prescreening_system.demo.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,5 +66,38 @@ public class ApplicationService {
     }
 
 
+
+
+
+
+
+
+
+
+    //---------
+    public Application updateApplicationStatus(Long id, String newStatus, Integer progress) {
+        Application application = applicationRepository.findById(id).orElse(null);
+        if (application != null) {
+            application.setStatus(newStatus);
+            application.setProgress(progress);
+            Application savedApplication = applicationRepository.save(application);
+            System.out.println("Updated Application: " + savedApplication); // Debugging
+            return savedApplication;
+        }
+        return null;
+    }
+
+
+
+
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public List<Application> getApplicationsByCandidate(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return applicationRepository.findByUserId(user.getId());
+    }
 
 }

@@ -2,8 +2,11 @@
 
 <template>
   <div>
-    <br>  <br>
+
     <center><button class="buttonJobAvailaibility"><router-link to="/CandidateJobList">Check Our Available Job Positions</router-link></button></center>
+
+    <button><router-link to="/yourapplications">Check your applications Status</router-link></button>
+<br>
     <h1>Apply for a Job</h1>
 
     <!-- Manual Job Selection and Submission -->
@@ -41,7 +44,13 @@
 
 
     <br><br><br><br><br><br>
+
+
+<br><br>
     <router-link to="/">Return Back</router-link>
+
+
+
 
 
 

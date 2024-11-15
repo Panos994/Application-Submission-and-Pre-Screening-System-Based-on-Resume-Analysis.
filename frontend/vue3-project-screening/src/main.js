@@ -28,6 +28,8 @@ import MorePage from '@/components/MorePage.vue';
 import InfoPage from '@/components/InfoPage.vue';
 
 
+import YourApplicationsPage from '@/components/YourApplicationsPage.vue';
+
 
 
 // Set base URL for Axios
@@ -51,8 +53,10 @@ const routes = [
 
             { path: '/about', component: AboutPage },
             { path: '/more', component: MorePage },
-            { path: '/info', component: InfoPage }
+            { path: '/info', component: InfoPage },
 
+
+            {path: '/yourapplications', component: YourApplicationsPage}
 
         ]
     }

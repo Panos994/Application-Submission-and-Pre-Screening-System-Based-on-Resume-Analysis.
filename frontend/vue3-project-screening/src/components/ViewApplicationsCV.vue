@@ -13,31 +13,53 @@
 
 
     <div class="table-container">
-    <table class="job-table">
-      <thead>
-      <tr>
-        <th>Application ID</th>
-        <th>Resume Download</th>
-        <th>CV File Name</th>
-      </tr>
-      </thead>
-      <tbody>
-      <!-- Filtered applications based on search query -->
-      <tr v-for="application in filteredApplications" :key="application.id">
-        <td>{{ application.id }}</td>
-        <td>
-          <button @click="downloadCV(application.id)" class="download-btn">Download CV</button>
-        </td>
-        <td>{{ getFileName(application.cvFileName) }}</td>
-      </tr>
-      </tbody>
-    </table>
+      <table class="job-table">
+        <thead>
+        <tr>
+          <th>Application ID</th>
+          <th>Resume Download</th>
+          <th>Status</th>
+          <th>Applications Views</th>
+          <th>CV File Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Filtered applications based on search query -->
+        <tr v-for="application in filteredApplications" :key="application.id">
+          <td>{{ application.id }}</td>
+          <td>
+            <button @click="downloadCV(application.id)" class="download-btn">Download CV</button>
+          </td>
+
+
+          <td>
+            <label>
+              <input
+                  type="checkbox"
+                  :checked="application.status === 'VIEWED'"
+                  :disabled="application.status === 'VIEWED'"
+                  @change="updateStatus(application.id, 'VIEWED')"
+              />
+              Mark as Viewed
+            </label>
+          </td>
+
+          <td><button @click="onApplicationView(application.id)">View Application</button></td>
+
+
+
+          <td>{{ getFileName(application.cvFileName) }}</td>
+        </tr>
+        </tbody>
+      </table>
     </div>
     <router-link to="/admin" class="back-link">Return Back to Job Postings Page</router-link>
   </div>
 </template>
 
 <script>
+
+import axios from 'axios';
 export default {
   data() {
     return {
@@ -93,6 +115,76 @@ export default {
           })
           .catch(error => console.error('Error downloading the CV:', error));
     },
+
+
+
+
+
+
+
+
+
+
+
+    updateStatus(id, newStatus) {
+      const token = localStorage.getItem("authToken");
+      axios
+          .patch(
+              `http://localhost:9090/api/applications/${id}/status`,
+              null,
+              {
+                params: { status: newStatus },
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+          )
+          .then((response) => {
+            // Update the local application status based on the response
+            const updatedApplication = response.data;
+            this.applications = this.applications.map((application) =>
+                application.id === id ? updatedApplication : application
+            );
+          })
+          .catch((error) => {
+            console.error("Error updating status:", error);
+          });
+    },
+    markAsViewed(id) {
+      this.applications = this.applications.map(app =>
+          app.id === id ? { ...app, status: "VIEWED" } : app
+      );
+    },
+    onApplicationView(id) {
+      // Directly call `updateStatus` with 'VIEWED' status
+      this.updateStatus(id, "VIEWED");
+    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     getFileName(filePath) {
       const indexOfUnderscore = filePath.indexOf('_', filePath.indexOf('-') + 1);
       return filePath.substring(indexOfUnderscore + 1);
@@ -166,6 +258,31 @@ export default {
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
 
+
+
+
+
+
+/* */
+.check-status-btn:hover {
+  transform: translateY(-2px);
+}
+
+.check-status-btn {
+  background-color: #3490dc;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 .download-btn:active {
   transform: translateY(0);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -180,5 +297,11 @@ export default {
 
 .back-link:hover {
   text-decoration: underline;
+}
+
+
+input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 </style>

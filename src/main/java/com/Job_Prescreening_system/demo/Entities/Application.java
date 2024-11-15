@@ -1,6 +1,8 @@
 package com.Job_Prescreening_system.demo.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 @Entity
 @Table(name = "applications")
@@ -17,11 +19,11 @@ public class Application {
 
     @ManyToOne
     @JoinColumn(name = "job_id")
-    @JsonIgnore  // Ignore job to break potential circular reference
+    @JsonManagedReference  // Ignore job to break potential circular reference
     private Job job;
 
     private Double matchScore;  // Automated score based on resume parsing and job requirements
-    private String status;      // e.g. "pending", "reviewed", "accepted"
+    private String status ="PENDING";      // e.g. "pending", "reviewed", "accepted"
     private String cvFileName;  // Name of the CV file
 
 
@@ -74,11 +76,30 @@ public class Application {
     }
 
 
+    private Integer progress;
+
+    public Integer getProgress() {
+        return progress;
+    }
+
+    public void setProgress(Integer progress) {
+        this.progress = progress;
+    }
 
 
 
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usrid", nullable = false)
+    @JsonBackReference
+    private User user;
 
+    public User getUser() {
+        return user;
+    }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
 

@@ -436,6 +436,8 @@ export default {
       window.location.href = `${url}?authToken=${authToken}`;
     }
   },
+
+
   created() {
     this.fetchJobs(); // Fetch jobs when the component is created
   }
