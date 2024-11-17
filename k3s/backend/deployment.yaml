@@ -49,3 +49,6 @@ spec:
 
 #for running the pod
 #kubectl apply -f backend/deployment.yaml
+
+
+#αντι για ingress χρησιμοποιω NodePort για να αποκτω προσβαση στις εφαρμογες

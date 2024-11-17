@@ -9,7 +9,7 @@ pipeline {
             steps {
                 script {
                     def github_username = "Panos994"
-                    def github_token = "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"
+                    def github_token = "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"
                     // Log in to GHCR using the token and username
                     sh "echo ${github_token} | docker login ghcr.io -u ${github_username} --password-stdin"
                 }
