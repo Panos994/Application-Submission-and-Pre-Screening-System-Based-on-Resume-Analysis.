@@ -40,3 +40,14 @@
 
 
 #ansible-playbook -i inventory.ini deploy.yml
+
+#τωρα τα σηκωνω manually αλλα μπορω να προσθέσω:
+#  - name: Copy docker-compose.yaml to target machine
+#      copy:
+#        src: /home/it2021154/Desktop/DraftJobSystem/Application-Submission-and-Pre-Screening-System-Based-on-Resume-Analysis./docker-compose.yml
+#        dest: /home/it2021154/Application-Submission-and-Pre-Screening-System-Based-on-Resume-Analysis/docker-compose.yml
+#
+#    - name: Start services with Docker Compose
+#      command: docker-compose up -d
+#      args:
+#        chdir: /home/it2021154/Application-Submission-and-Pre-Screening-System-Based-on-Resume-Analysis

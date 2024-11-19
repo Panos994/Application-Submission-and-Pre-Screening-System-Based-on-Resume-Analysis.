@@ -35,6 +35,7 @@ import YourApplicationsPage from '@/components/YourApplicationsPage.vue';
 // Set base URL for Axios
 axios.defaults.baseURL = 'http://localhost:9090';
 //axios.defaults.baseURL = 'http://13.60.60.8:30090';
+//axios.defaults.baseURL = 'http://cvanalysishuait.ddns.net:30090';
 
 // Define routes
 const routes = [

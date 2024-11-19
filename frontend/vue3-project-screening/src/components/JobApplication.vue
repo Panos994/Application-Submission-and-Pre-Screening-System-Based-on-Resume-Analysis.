@@ -3,6 +3,35 @@
 <template>
   <div>
 
+
+    <div id="progress-bar-container" v-if="scoreMessage">
+      <div class="progress-container">
+        <!-- Name/Label before progress bar -->
+        <div class="score-label">
+          <strong> Score:</strong>
+        </div>
+        <svg class="progress-circle" viewBox="0 0 36 36">
+          <path class="circle-bg" d="M18 2a16 16 0 1 1 0 32 16 16 0 0 1 0-32" />
+          <path
+              class="circle-progress"
+              :d="progressPath"
+              :style="{ strokeDasharray: strokeDashArray }"
+          />
+        </svg>
+        <div class="progress-value">
+          {{ manualScore }}%
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
     <center><button class="buttonJobAvailaibility"><router-link to="/CandidateJobList">Check Our Available Job Positions</router-link></button></center>
 
     <button><router-link to="/yourapplications">Check your applications Status</router-link></button>
@@ -21,7 +50,7 @@
     <button @click="submitManualResume">Submit Resume (Manual)</button>
 
     <!-- Displaying the manual score after submission -->
-    <p v-if="scoreMessage">{{ scoreMessage }}</p>
+
 
     <br><br><br><br><br><br>
 
@@ -68,10 +97,28 @@ export default {
       selectedJobId: null,   // To store selected job
       jobs: [],              // List of jobs
       scoreMessage: '',      // Message displaying score after manual submission
+      manualScore: 0,
       aiResponseData: '',    // Raw AI response data
       showTyping: false      // To control the typing effect
     };
   },
+
+
+  computed: {
+    progressPath() {
+      return `
+      M18 2
+      a 16 16 0 1 1 0 32
+      a 16 16 0 1 1 0 -32
+    `;
+    },
+    strokeDashArray() {
+      return `${this.manualScore * 100 / 100} 100`;
+    }
+  },
+
+
+
   methods: {
     handleFileUploadManual(event) {
       // Store the selected file for manual submission
@@ -104,14 +151,15 @@ export default {
           }
         });
 
-        // Extract the score and display
+        // Extract the score and update circular progress
         const regex = /(\d+(\.\d+)?)/;
         const match = response.data.match(regex);
 
         if (match) {
-          const score = parseFloat(match[0]).toFixed(2);
-          this.scoreMessage = `Your resume scored: ${score} points!`;
+          this.manualScore = parseFloat(match[0]).toFixed(2);
+          this.scoreMessage = `Your resume scored: ${this.manualScore} points!`;
         } else {
+          this.manualScore = 0;
           this.scoreMessage = response.data;
         }
 
@@ -345,6 +393,60 @@ a {
   color: rgb(0, 0, 0);
   font-weight: bold;
 }
+
+
+
+
+
+
+#progress-bar-container {
+  position: fixed;
+  top: 20px; /* Adjust spacing from the top */
+  right: 20px; /* Adjust spacing from the right */
+  z-index: 1000; /* Ensure it appears above other content */
+}
+
+.progress-container {
+  position: fixed; /* Ensures it stays relative to the viewport */
+  top: 50%; /* Aligns vertically in the middle */
+  right: 5%; /* Positions it towards the right */
+  transform: translateY(-50%); /* Ensures perfect vertical centering */
+  width: 100px;
+  height: 140px;
+  z-index: 1000; /* Keeps it above other elements */
+}
+
+
+.progress-circle {
+  width: 100%;
+  height: 100%;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: #e6e6e6;
+  stroke-width: 3.8;
+}
+
+.circle-progress {
+  fill: none;
+  stroke: #0073b1;
+  stroke-width: 3.8;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.progress-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
 
 
 </style>

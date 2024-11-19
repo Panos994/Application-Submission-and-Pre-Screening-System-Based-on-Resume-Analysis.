@@ -8,24 +8,21 @@
           <th>Status</th>
           <th>CV</th>
           <th>Job Title</th>
-          <th>Progress</th>
+
         </tr>
         </thead>
         <tbody>
         <tr v-for="application in applications" :key="application.id">
+          <!-- Dynamically apply the status class -->
           <td>
-            <p>Status: {{ application.status }}</p>
+            <p :class="statusClass(application.status)">
+              Status: {{ application.status }}
+            </p>
           </td>
           <td>{{ getFileName(application.cvFileName) }}</td>
           <td v-if="application.job">{{ application.job.title }}</td>
           <td v-else>Job information is not available</td>
-          <td>
-            <div class="progress-bar">
-              <div :style="{ width: (application.progress / 2) * 100 + '%' }">
-                {{ application.progress }}/2
-              </div>
-            </div>
-          </td>
+
         </tr>
         </tbody>
       </table>
@@ -34,33 +31,34 @@
   </div>
 </template>
 
+
+
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
     return {
-      applications: []
+      applications: [],
     };
   },
   methods: {
     async fetchApplications() {
       try {
-        const token = localStorage.getItem('authToken'); // Get the token from local storage
-        console.log("Token being sent:", token);
+        const token = localStorage.getItem("authToken");
         if (!token) {
-          console.error('No authentication token found');
+          console.error("No authentication token found");
           return;
         }
 
-        const response = await axios.get('http://localhost:9090/api/applications/user', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        console.log("Response status:", response.status);
-        console.log("Response data:", response.data);
+        const response = await axios.get(
+            "http://localhost:9090/api/applications/user",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+        );
 
         if (response.status === 204) {
           console.log("No applications found for this user.");
@@ -74,15 +72,27 @@ export default {
     },
 
     getFileName(filePath) {
-      const indexOfUnderscore = filePath.indexOf('_', filePath.indexOf('-') + 1);
+      const indexOfUnderscore = filePath.indexOf("_", filePath.indexOf("-") + 1);
       return filePath.substring(indexOfUnderscore + 1);
-    }
+    },
+
+    statusClass(status) {
+      // Return the appropriate class based on the status
+      if (status === "PENDING") {
+        return "pending-status";
+      } else if (status === "VIEWED") {
+        return "viewed-status";
+      }
+      return "";
+    },
   },
   created() {
     this.fetchApplications();
-  }
+  },
 };
 </script>
+
+
 
 <style>
 /* Container for the table with fixed height and scroll */
@@ -101,7 +111,8 @@ export default {
   font-family: Arial, sans-serif;
 }
 
-.applications-table th, .applications-table td {
+.applications-table th,
+.applications-table td {
   padding: 8px;
   text-align: left;
   border-bottom: 1px solid #ddd;
@@ -123,19 +134,18 @@ export default {
 
 .progress-bar > div {
   height: 100%;
-  background-color: #4caf50;
   text-align: center;
   color: white;
   line-height: 20px;
   white-space: nowrap;
 }
 
-
-
+/* Status-specific styles */
 .pending-status {
   color: orange;
   font-weight: bold;
 }
+
 .viewed-status {
   color: green;
   font-weight: bold;

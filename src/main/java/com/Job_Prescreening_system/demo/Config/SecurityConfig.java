@@ -44,6 +44,7 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://localhost:9000"); // MinIO instance, if applicable
         configuration.addAllowedOrigin("http://localhost:9001"); // MinIO instance, if applicable
         //configuration.addAllowedOrigin("http://16.171.22.11:30082"); // Add AWS frontend IP - just for testing
+        //configuration.addAllowedOrigin("http://cvanalysishuait.ddns.net:30082"); // Add DDNS frontend IP - just for testing
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
