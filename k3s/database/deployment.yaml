@@ -30,3 +30,4 @@ spec:
       volumes:
         - name: postgres-data
           emptyDir: {}
+#healthchecks pending

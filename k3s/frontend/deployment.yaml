@@ -37,3 +37,6 @@ spec:
 
 #for running the pod
 #kubectl apply -f frontend/deployment.yaml
+
+
+#healthchecks pending

@@ -25,3 +25,6 @@ spec:
         - name: nginx-config-volume
           configMap:
             name: nginx-config
+
+
+#healthchecks pending

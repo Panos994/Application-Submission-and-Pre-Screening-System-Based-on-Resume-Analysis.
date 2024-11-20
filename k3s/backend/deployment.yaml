@@ -52,3 +52,8 @@ spec:
 
 
 #αντι για ingress χρησιμοποιω NodePort για να αποκτω προσβαση στις εφαρμογες
+
+
+
+
+#readiness kai liveness (health checks)

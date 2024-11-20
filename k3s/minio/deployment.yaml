@@ -36,3 +36,6 @@ spec:
       volumes:
         - name: minio-data
           emptyDir: {}
+
+
+#healthchecks pending

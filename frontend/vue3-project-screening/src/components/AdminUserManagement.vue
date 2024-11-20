@@ -5,59 +5,70 @@
 
     <!-- Displaying users -->
     <div class="table-container">
-    <table class="w-full border border-gray-300 mt-4">
-      <thead>
-      <tr class="bg-gray-200">
-        <th class="border border-gray-300 p-4">ID</th>
-        <th class="border border-gray-300 p-4">Username</th>
-        <th class="border border-gray-300 p-4">Email</th>
-        <th class="border border-gray-300 p-4">Delete Action</th>
-        <th class="border border-gray-300 p-4">Roles</th>
-        <th class="border border-gray-300 p-4">Assign Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="user in users" :key="user.id" class="hover:bg-gray-100">
-        <td class="border border-gray-300 p-4">{{ user.id }}</td>
-        <td class="border border-gray-300 p-4">{{ user.username }}</td>
-        <td class="border border-gray-300 p-4">{{ user.email }}</td>
-        <td class="border border-gray-300 p-4">
-          <button @click="deleteUser(user.id)" class="btn btn-danger">
-            Delete User
-          </button>
-        </td>
-        <td class="border border-gray-300 p-4">
-          <ul class="list-disc pl-5">
-            <li v-for="role in user.roles" :key="role" class="role-item">{{ role }}</li>
-          </ul>
-        </td>
-        <td class="border border-gray-300 p-4 space-y-2">
-          <button @click="addRole(user.id, 'ROLE_MODERATOR')" class="btn btn-primary">
-            Add Moderator
-          </button>
-          <button @click="deleteRole(user.id, 'ROLE_MODERATOR')" class="btn btn-warning">
-            Delete Moderator
-          </button>
-          <button @click="addRole(user.id, 'ROLE_ADMIN')" class="btn btn-success">
-            Add Admin
-          </button>
-          <button @click="deleteRole(user.id, 'ROLE_ADMIN')" class="btn btn-warning">
-            Delete Admin
-          </button>
-          <button @click="addRole(user.id, 'ROLE_USER')" class="btn btn-info">
-            Add User
-          </button>
-          <button @click="deleteRole(user.id, 'ROLE_USER')" class="btn btn-warning">
-            Delete User
-          </button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+      <table class="w-full border border-gray-300 mt-4">
+        <thead>
+        <tr class="bg-gray-200">
+          <th class="border border-gray-300 p-4">ID</th>
+          <th class="border border-gray-300 p-4">Username</th>
+          <th class="border border-gray-300 p-4">Email</th>
+          <th class="border border-gray-300 p-4">Delete Action</th>
+          <th class="border border-gray-300 p-4">Roles</th>
+          <th class="border border-gray-300 p-4">Assign Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="user in paginatedUsers" :key="user.id" class="hover:bg-gray-100">
+          <td class="border border-gray-300 p-4">{{ user.id }}</td>
+          <td class="border border-gray-300 p-4">{{ user.username }}</td>
+          <td class="border border-gray-300 p-4">{{ user.email }}</td>
+          <td class="border border-gray-300 p-4">
+            <button @click="deleteUser(user.id)" class="btn btn-danger">Delete User</button>
+          </td>
+          <td class="border border-gray-300 p-4">
+            <ul class="list-disc pl-5">
+              <li v-for="role in user.roles" :key="role" class="role-item">{{ role }}</li>
+            </ul>
+          </td>
+          <td class="border border-gray-300 p-4 space-y-2">
+            <button @click="addRole(user.id, 'ROLE_MODERATOR')" class="btn btn-primary">
+              Add Moderator
+            </button>
+            <button @click="deleteRole(user.id, 'ROLE_MODERATOR')" class="btn btn-warning">
+              Delete Moderator
+            </button>
+            <button @click="addRole(user.id, 'ROLE_ADMIN')" class="btn btn-success">
+              Add Admin
+            </button>
+            <button @click="deleteRole(user.id, 'ROLE_ADMIN')" class="btn btn-warning">
+              Delete Admin
+            </button>
+            <button @click="addRole(user.id, 'ROLE_USER')" class="btn btn-info">
+              Add User
+            </button>
+            <button @click="deleteRole(user.id, 'ROLE_USER')" class="btn btn-warning">
+              Delete User
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-controls">
+      <button
+          class="btn btn-info"
+          :disabled="currentPage === 1"
+          @click="currentPage--">Previous
+      </button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button
+          class="btn btn-info"
+          :disabled="currentPage === totalPages"
+          @click="currentPage++">Next
+      </button>
     </div>
   </div>
-
-  <!--router-link to="/">Go to Homepage</router-link-->
 </template>
 
 <script>
@@ -74,8 +85,24 @@ export default {
   data() {
     return {
       users: [], // Array of users
+      currentPage: 1, // Current page --- adding pagination
+      rowsPerPage: 5, // Rows per page --- adding pagination
     };
   },
+
+
+  computed: {
+    totalPages() {
+      return Math.ceil(this.users.length / this.rowsPerPage);
+    },
+    paginatedUsers() {
+      const start = (this.currentPage - 1) * this.rowsPerPage;
+      const end = start + this.rowsPerPage;
+      return this.users.slice(start, end);
+    },
+  },
+
+
   mounted() {
     this.fetchUsers();
   },
@@ -248,6 +275,20 @@ th {
 
 div {
   margin: 20px;
+}
+
+
+
+
+
+
+
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  align-items: center;
 }
 </style>
 

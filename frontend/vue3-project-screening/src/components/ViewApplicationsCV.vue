@@ -1,7 +1,8 @@
 <template>
   <div>
-    <h1 class="header">Applications</h1>
 
+    <!--h1 class="header">Applications</h1-->
+    <center><router-link to="/admin" class="back-link">Return Back to Job Postings Page</router-link></center>
     <!-- Search input -->
     <input
         type="text"
@@ -9,8 +10,6 @@
         placeholder="Search by CV File Name"
         class="search-input"
     />
-
-
 
     <div class="table-container">
       <table class="job-table">
@@ -53,7 +52,7 @@
         </tbody>
       </table>
     </div>
-    <router-link to="/admin" class="back-link">Return Back to Job Postings Page</router-link>
+
   </div>
 </template>
 
@@ -116,16 +115,6 @@ export default {
           .catch(error => console.error('Error downloading the CV:', error));
     },
 
-
-
-
-
-
-
-
-
-
-
     updateStatus(id, newStatus) {
       const token = localStorage.getItem("authToken");
       axios
@@ -160,31 +149,6 @@ export default {
       this.updateStatus(id, "VIEWED");
     },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     getFileName(filePath) {
       const indexOfUnderscore = filePath.indexOf('_', filePath.indexOf('-') + 1);
       return filePath.substring(indexOfUnderscore + 1);
@@ -211,11 +175,12 @@ export default {
 
 
 .table-container {
-  max-height: 400px; /* Set your desired max height */
-  overflow-y: auto; /* Enable vertical scrolling */
   margin-top: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  overflow-x: auto; /* Enable horizontal scrolling for wide tables */
+  max-height: 80vh; /* Ensure it doesn't exceed the viewport height */
+  overflow-y: auto; /* Enable vertical scrolling within the table if it overflows */
 }
 
 
@@ -224,9 +189,9 @@ export default {
 
 
 .job-table {
-  width: 100%;
+  width: 100%; /* Full width */
   border-collapse: collapse;
-  margin-top: 20px;
+  font-size: 14px;
 }
 
 .job-table th,
@@ -236,22 +201,41 @@ export default {
   text-align: left;
 }
 
+
 .job-table th {
   background-color: #f8f9fa;
+  font-weight: bold;
+  font-size: 14px;
+}
+.job-table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Add alternating row colors */
 }
 
-.download-btn {
-  display: inline-block;
-  padding: 8px 16px;
-  font-size: 16px;
-  background-color: #000;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+
+.job-table tr:hover {
+  background-color: #e9ecef; /* Highlight row on hover */
 }
+body, html {
+  height: 100%; /* Ensure the height adapts to content */
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+
+.download-btn {
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+
+
+
+
+
+
+
 
 .download-btn:hover {
   transform: translateY(-2px);

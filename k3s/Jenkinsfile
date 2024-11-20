@@ -59,3 +59,5 @@ pipeline {
 
 
 
+// build part και push στο container registry (eite se auto eite se allo)
+//prepei na skefto kai mixanismo versioning (semantic versioning)

@@ -8,12 +8,10 @@
           <th>Status</th>
           <th>CV</th>
           <th>Job Title</th>
-
         </tr>
         </thead>
         <tbody>
-        <tr v-for="application in applications" :key="application.id">
-          <!-- Dynamically apply the status class -->
+        <tr v-for="application in paginatedApplications" :key="application.id">
           <td>
             <p :class="statusClass(application.status)">
               Status: {{ application.status }}
@@ -22,11 +20,18 @@
           <td>{{ getFileName(application.cvFileName) }}</td>
           <td v-if="application.job">{{ application.job.title }}</td>
           <td v-else>Job information is not available</td>
-
         </tr>
         </tbody>
       </table>
     </div>
+
+    <!-- Pagination controls -->
+    <div class="pagination">
+      <button :disabled="currentPage === 1" @click="currentPage--">Previous</button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button :disabled="currentPage === totalPages" @click="currentPage++">Next</button>
+    </div>
+
     <router-link to="/job-application">Go to Job Application Page</router-link>
   </div>
 </template>
@@ -40,7 +45,21 @@ export default {
   data() {
     return {
       applications: [],
+      currentPage: 1, // Track the current page
+      itemsPerPage: 5, // Number of items per page
     };
+  },
+  computed: {
+    // Calculate the paginated applications
+    paginatedApplications() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.applications.slice(start, end);
+    },
+    // Calculate the total number of pages
+    totalPages() {
+      return Math.ceil(this.applications.length / this.itemsPerPage);
+    },
   },
   methods: {
     async fetchApplications() {
@@ -149,5 +168,31 @@ export default {
 .viewed-status {
   color: green;
   font-weight: bold;
+}
+
+
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.pagination button {
+  margin: 0 10px;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  background-color: #f4f4f4;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pagination span {
+  font-size: 16px;
 }
 </style>
