@@ -29,8 +29,8 @@ pipeline {
             steps {
                 script {
                     echo "Building backend Docker image"
-                    // Build the backend Docker image
-                    sh "docker build -t $BACKEND_IMAGE -f Dockerfile.backend ."
+                    // Build the backend Docker image using the correct path
+                    sh "docker build -t $BACKEND_IMAGE -f Dockerfile ."
                 }
             }
         }
@@ -39,8 +39,8 @@ pipeline {
             steps {
                 script {
                     echo "Building frontend Docker image"
-                    // Build the frontend Docker image
-                    sh "docker build -t $FRONTEND_IMAGE -f Dockerfile.frontend ."
+                    // Build the frontend Docker image using the correct path
+                    sh "docker build -t $FRONTEND_IMAGE -f frontend/vue3-project-screening/Dockerfile ."
                 }
             }
         }
@@ -119,7 +119,6 @@ pipeline {
         }
     }
 }
-
 
 
 
