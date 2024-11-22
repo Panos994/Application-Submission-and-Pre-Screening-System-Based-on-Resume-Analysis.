@@ -1,10 +1,49 @@
 pipeline {
     agent any
     environment {
-        BACKEND_IMAGE = 'ghcr.io/panos994/application-submission-and-pre-screening-system-based-on-resume-analysis/backend:1.0'
-        FRONTEND_IMAGE = 'ghcr.io/panos994/application-submission-and-pre-screening-system-based-on-resume-frontend:latest'
+        BACKEND_IMAGE = 'ghcr.io/panos994/application-submission-and-pre-screening-system-based-on-resume-analysis/backend'
+        FRONTEND_IMAGE = 'ghcr.io/panos994/application-submission-and-pre-screening-system-based-on-resume-frontend'
     }
     stages {
+        stage('Git Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Get Version') {
+            steps {
+                script {
+                    // Get the latest git tag to use for versioning (semantic versioning)
+                    def version = sh(script: "git describe --tags --abbrev=0", returnStdout: true).trim()
+
+                    // If there's no version tag, default to 0.0.1
+                    if (!version) {
+                        version = "0.0.1"
+                    }
+
+                    // Use the version in the image tag
+                    env.BACKEND_IMAGE = "ghcr.io/panos994/application-submission-and-pre-screening-system-based-on-resume-analysis/backend:${version}"
+                    env.FRONTEND_IMAGE = "ghcr.io/panos994/application-submission-and-pre-screening-system-based-on-resume-frontend:${version}"
+                    echo "Using version: ${version}"
+                }
+            }
+        }
+        stage('Docker Build Backend') {
+            steps {
+                script {
+                    // Build the backend Docker image with semantic versioning
+                    sh "docker build -t ${env.BACKEND_IMAGE} -f Dockerfile.backend ."
+                }
+            }
+        }
+        stage('Docker Build Frontend') {
+            steps {
+                script {
+                    // Build the frontend Docker image with semantic versioning
+                    sh "docker build -t ${env.FRONTEND_IMAGE} -f Dockerfile.frontend ."
+                }
+            }
+        }
         stage('Docker Login to GHCR') {
             steps {
                 script {
@@ -12,6 +51,22 @@ pipeline {
                     def github_token = "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"
                     // Log in to GHCR using the token and username
                     sh "echo ${github_token} | docker login ghcr.io -u ${github_username} --password-stdin"
+                }
+            }
+        }
+        stage('Push Backend Image') {
+            steps {
+                script {
+                    // Push the backend Docker image to GitHub Container Registry
+                    sh "docker push ${env.BACKEND_IMAGE}"
+                }
+            }
+        }
+        stage('Push Frontend Image') {
+            steps {
+                script {
+                    // Push the frontend Docker image to GitHub Container Registry
+                    sh "docker push ${env.FRONTEND_IMAGE}"
                 }
             }
         }
@@ -30,7 +85,7 @@ pipeline {
                 KUBECONFIG = '/etc/rancher/k3s/k3s.yaml' // Path to kubeconfig file on EC2 instance
             }
             steps {
-                // Applying database and MinIO manifests using relative paths from the repository
+                // Apply database and MinIO manifests using relative paths from the repository
                 sh 'kubectl apply -f k3s/database/deployment.yaml'
                 sh 'kubectl apply -f k3s/database/service.yaml'
                 sh 'kubectl apply -f k3s/minio'
@@ -56,6 +111,7 @@ pipeline {
         }
     }
 }
+
 
 
 
