@@ -31,7 +31,7 @@ pipeline {
                     echo "Building backend Docker image"
 
                     // Use Maven Docker image for building the backend
-                    sh 'docker run --rm -v $(pwd):/app -w /app maven:3.8.6-openjdk-21 mvn clean package -DskipTests'
+                    sh 'docker run --rm -v $(pwd):/app -w /app maven:3.8.6-openjdk-17 mvn clean package -DskipTests'
 
                     // Build the backend Docker image using the JAR file
                     sh "docker build -t $BACKEND_IMAGE -f Dockerfile.backend ."
