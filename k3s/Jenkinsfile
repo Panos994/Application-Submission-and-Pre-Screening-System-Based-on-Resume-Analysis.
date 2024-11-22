@@ -5,45 +5,46 @@ pipeline {
         FRONTEND_IMAGE = 'ghcr.io/panos994/application-submission-and-pre-screening-system-based-on-resume-frontend'
     }
     stages {
-        stage('Git Checkout') {
-            steps {
-                checkout scm
-            }
-        }
         stage('Get Version') {
             steps {
                 script {
-                    // Get the latest git tag to use for versioning (semantic versioning)
-                    def version = sh(script: "git describe --tags --abbrev=0", returnStdout: true).trim()
+                    // Checkout the 'master' branch
+                    sh 'git checkout master'
 
-                    // If there's no version tag, default to 0.0.1
-                    if (!version) {
-                        version = "0.0.1"
-                    }
+                    // Get the commit hash for the 'master' branch
+                    def commitHash = sh(script: "git rev-parse --short master", returnStdout: true).trim()
+
+                    // Construct version string (use the commit hash in the versioning)
+                    def version = "1.0.0-${commitHash}"
+                    echo "Using generated version: ${version}"
 
                     // Use the version in the image tag
                     env.BACKEND_IMAGE = "ghcr.io/panos994/application-submission-and-pre-screening-system-based-on-resume-analysis/backend:${version}"
                     env.FRONTEND_IMAGE = "ghcr.io/panos994/application-submission-and-pre-screening-system-based-on-resume-frontend:${version}"
-                    echo "Using version: ${version}"
                 }
             }
         }
-        stage('Docker Build Backend') {
+
+        stage('Build Backend Image') {
             steps {
                 script {
-                    // Build the backend Docker image with semantic versioning
-                    sh "docker build -t ${env.BACKEND_IMAGE} -f Dockerfile.backend ."
+                    echo "Building backend Docker image"
+                    // Build the backend Docker image
+                    sh "docker build -t $BACKEND_IMAGE -f Dockerfile.backend ."
                 }
             }
         }
-        stage('Docker Build Frontend') {
+
+        stage('Build Frontend Image') {
             steps {
                 script {
-                    // Build the frontend Docker image with semantic versioning
-                    sh "docker build -t ${env.FRONTEND_IMAGE} -f Dockerfile.frontend ."
+                    echo "Building frontend Docker image"
+                    // Build the frontend Docker image
+                    sh "docker build -t $FRONTEND_IMAGE -f Dockerfile.frontend ."
                 }
             }
         }
+
         stage('Docker Login to GHCR') {
             steps {
                 script {
@@ -54,32 +55,39 @@ pipeline {
                 }
             }
         }
+
         stage('Push Backend Image') {
             steps {
                 script {
-                    // Push the backend Docker image to GitHub Container Registry
-                    sh "docker push ${env.BACKEND_IMAGE}"
+                    echo "Pushing backend Docker image to GHCR"
+                    // Push the backend image to GHCR
+                    sh "docker push $BACKEND_IMAGE"
                 }
             }
         }
+
         stage('Push Frontend Image') {
             steps {
                 script {
-                    // Push the frontend Docker image to GitHub Container Registry
-                    sh "docker push ${env.FRONTEND_IMAGE}"
+                    echo "Pushing frontend Docker image to GHCR"
+                    // Push the frontend image to GHCR
+                    sh "docker push $FRONTEND_IMAGE"
                 }
             }
         }
+
         stage('Pull Backend Image') {
             steps {
                 sh 'docker pull $BACKEND_IMAGE'
             }
         }
+
         stage('Pull Frontend Image') {
             steps {
                 sh 'docker pull $FRONTEND_IMAGE'
             }
         }
+
         stage('Deploy to Kubernetes') {
             environment {
                 KUBECONFIG = '/etc/rancher/k3s/k3s.yaml' // Path to kubeconfig file on EC2 instance
