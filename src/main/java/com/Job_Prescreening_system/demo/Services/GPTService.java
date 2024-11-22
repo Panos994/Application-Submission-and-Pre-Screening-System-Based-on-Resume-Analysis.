@@ -84,19 +84,23 @@ public class GPTService {
         JSONObject jsonResponse = new JSONObject(responseBody);
         logger.info("OpenAI Response: " + jsonResponse.toString());
 
+        String aiResponse = "Error: Unable to parse OpenAI response.";
         if (jsonResponse.has("choices") && jsonResponse.getJSONArray("choices").length() > 0) {
             JSONObject firstChoice = jsonResponse.getJSONArray("choices").getJSONObject(0);
             if (firstChoice.has("message")) {
                 Object message = firstChoice.get("message");
                 if (message instanceof JSONObject) {
-                    return ((JSONObject) message).getString("content");
+                    aiResponse = ((JSONObject) message).getString("content");
                 } else if (message instanceof String) {
-                    return (String) message;
+                    aiResponse = (String) message;
                 }
             }
         }
 
-        logger.error("Unexpected response format: " + jsonResponse.toString());
-        return "Error: Unable to parse OpenAI response.";
+        // Append link to the CandidateJobList page
+        String additionalInfo = "\n\nFor checking these job opportunities, please visit: " +
+                "<a href=\"/CandidateJobList\">Check Available Job Positions</a>";
+        return aiResponse + additionalInfo;
     }
+
 }

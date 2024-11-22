@@ -35,7 +35,7 @@
     <center><button class="buttonJobAvailaibility"><router-link to="/CandidateJobList">Check Our Available Job Positions</router-link></button></center>
 
     <button><router-link to="/yourapplications">Check your applications Status</router-link></button>
-<br>
+    <br>
     <h1>Apply for a Job</h1>
 
     <!-- Manual Job Selection and Submission -->
@@ -52,12 +52,12 @@
     <!-- Displaying the manual score after submission -->
 
 
-    <br><br><br><br><br><br>
+    <br><br><br>
 
     <hr>
 
 
-    <br><br><br>
+
     <!-- AI-based Resume Submission -->
     <h2>AI-Assisted Job Matching</h2>
     <input type="file" @change="handleFileUploadAI" accept=".pdf,.doc,.docx" />
@@ -75,8 +75,8 @@
     <br><br><br><br><br><br>
 
 
-<br><br>
-    <router-link to="/">Return Back</router-link>
+    <br><br>
+
 
 
 

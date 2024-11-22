@@ -1,3 +1,4 @@
+#backend
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -30,8 +31,21 @@ spec:
               value: "newusername"
             - name: MINIO_SECRET_KEY
               value: "newpassword"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 9090
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 9090
+            initialDelaySeconds: 10
+            periodSeconds: 5
       imagePullSecrets:
-        - name: github-registry-secret  # Add  line to use the secret
+        - name: github-registry-secret
+
 
 
 

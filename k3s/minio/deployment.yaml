@@ -1,3 +1,4 @@
+#minio
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -33,9 +34,18 @@ spec:
           volumeMounts:
             - name: minio-data
               mountPath: /data
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: 9000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /minio/health/ready
+              port: 9000
+            initialDelaySeconds: 10
+            periodSeconds: 5
       volumes:
         - name: minio-data
           emptyDir: {}
-
-
-#healthchecks pending

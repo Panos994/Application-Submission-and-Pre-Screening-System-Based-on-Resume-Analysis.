@@ -1,3 +1,4 @@
+#nginx
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,10 +22,19 @@ spec:
             - name: nginx-config-volume
               mountPath: /etc/nginx/conf.d/default.conf
               subPath: default.conf
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
       volumes:
         - name: nginx-config-volume
           configMap:
             name: nginx-config
-
-
-#healthchecks pending
