@@ -25,19 +25,28 @@ pipeline {
             }
         }
 
-        stage('Build Backend Image') {
-            steps {
-                script {
-                    echo "Building backend Docker image"
+         stage('Build Backend Image') {
+                    steps {
+                        script {
+                            echo "Building backend Docker image"
 
-                    // Use Maven Docker image for building the backend
-                    sh 'docker run --rm -v $(pwd):/app -w /app maven:3.8.6-openjdk-11 mvn clean package -DskipTests'
+                            // Use OpenJDK 17 as the base image and install Maven manually
+                            sh '''
+                            docker run --rm -v $(pwd):/app -w /app openjdk:17 bash -c "
+                            apt update && apt install -y wget && \
+                            wget https://dlcdn.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz && \
+                            tar -xvzf apache-maven-3.8.6-bin.tar.gz && \
+                            mv apache-maven-3.8.6 /opt/maven && \
+                            ln -s /opt/maven/bin/mvn /usr/bin/mvn && \
+                            mvn clean package -DskipTests
+                            "
+                            '''
 
-                    // Build the backend Docker image using the JAR file
-                    sh "docker build -t $BACKEND_IMAGE -f Dockerfile.backend ."
-                }
-            }
-        }
+                            // Build the backend Docker image using the JAR file
+                            sh "docker build -t $BACKEND_IMAGE -f Dockerfile.backend ."
+                        }
+                    }
+         }
 
         stage('Build Frontend Image') {
             steps {
