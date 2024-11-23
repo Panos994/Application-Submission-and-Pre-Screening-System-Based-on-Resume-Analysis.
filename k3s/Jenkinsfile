@@ -48,7 +48,10 @@ pipeline {
                 script {
                     echo "Building frontend Docker image"
                     // Build the frontend Docker image
-                    sh "docker build -t $FRONTEND_IMAGE -f Dockerfile.frontend ."
+                     sh '''
+                     cd frontend/frontend/vue3-project-screening
+                     docker build -t $FRONTEND_IMAGE -f ./Dockerfile .
+                      '''
                 }
             }
         }
