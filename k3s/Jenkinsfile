@@ -105,13 +105,13 @@ pipeline {
             }
             steps {
                 // Apply database and MinIO manifests using relative paths from the repository
-                sh 'kubectl apply -f k3s/database/deployment.yaml'
-                sh 'kubectl apply -f k3s/database/service.yaml'
-                sh 'kubectl apply -f k3s/minio'
+                sh 'sudo kubectl apply -f k3s/database/deployment.yaml'
+                sh 'sudo kubectl apply -f k3s/database/service.yaml'
+                sh 'sudo kubectl apply -f k3s/minio'
 
                 // Apply the backend and frontend images from GitHub Packages
-                sh 'kubectl apply -f k3s/backend/deployment.yaml'  // Path to backend deployment.yaml
-                sh 'kubectl apply -f k3s/backend/service.yaml'     // Path to backend service.yaml
+                sh 'sudo kubectl apply -f k3s/backend/deployment.yaml'  // Path to backend deployment.yaml
+                sh 'sudo kubectl apply -f k3s/backend/service.yaml'     // Path to backend service.yaml
 
                 // Ensure backend deployment exists, or create it if it doesn't
                 script {
@@ -119,13 +119,13 @@ pipeline {
                     if (!backendDeploymentExists) {
                         echo "Backend deployment not found, creating it."
                         // Create the backend deployment if it doesn't exist
-                        sh 'kubectl apply -f k3s/backend/deployment.yaml'  // Applying backend deployment if it doesn't exist
+                        sh 'sudo kubectl apply -f k3s/backend/deployment.yaml'  // Applying backend deployment if it doesn't exist
                     }
                 }
 
                 // Set the images for the backend and frontend deployments
-                sh 'kubectl set image deployment/spring-backend spring-backend=$BACKEND_IMAGE'
-                sh 'kubectl set image deployment/vue-frontend vue-frontend=$FRONTEND_IMAGE'
+                sh 'sudo kubectl set image deployment/spring-backend spring-backend=$BACKEND_IMAGE'
+                sh 'sudo kubectl set image deployment/vue-frontend vue-frontend=$FRONTEND_IMAGE'
             }
         }
     }
