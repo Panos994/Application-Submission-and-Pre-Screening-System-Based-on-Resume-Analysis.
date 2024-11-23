@@ -30,20 +30,15 @@ pipeline {
                           script {
                               echo "Building backend Docker image"
 
-                              // Use OpenJDK 17 as the base image and install Maven and bash manually using apk
+                              // Use OpenJDK 17 base image and install Maven through apk
                               sh '''
                               docker run --rm -v $(pwd):/app -w /app openjdk:17-alpine sh -c "
-                              apk update && apk add --no-cache curl bash && \
-                              curl -L https://downloads.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz -o maven.tar.gz && \
-                              tar -xvzf maven.tar.gz && \
-                              mv apache-maven-3.8.6 /opt/maven && \
-                              ln -s /opt/maven/bin/mvn /usr/bin/mvn && \
+                              apk update && apk add --no-cache curl bash maven && \
                               mvn clean package -DskipTests
                               "
                               '''
-
                               // Build the backend Docker image using the JAR file
-                              sh "docker build -t $BACKEND_IMAGE -f Dockerfile.backend ."
+                              sh "docker build -t ${BACKEND_IMAGE} -f ./Dockerfile ."
                           }
                       }
           }
