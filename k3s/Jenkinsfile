@@ -34,7 +34,7 @@ pipeline {
                               sh '''
                               docker run --rm -v $(pwd):/app -w /app openjdk:17-alpine sh -c "
                               apk update && apk add --no-cache curl bash && \
-                              curl -sL https://apache.org/dyn/closer.cgi/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz -o maven.tar.gz && \
+                              curl -L https://downloads.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz -o maven.tar.gz && \
                               tar -xvzf maven.tar.gz && \
                               mv apache-maven-3.8.6 /opt/maven && \
                               ln -s /opt/maven/bin/mvn /usr/bin/mvn && \
@@ -62,7 +62,7 @@ pipeline {
             steps {
                 script {
                     def github_username = "Panos994"
-                    def github_token = "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"
+                    def github_token = "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"
                     // Log in to GHCR using the token and username
                     sh "echo ${github_token} | docker login ghcr.io -u ${github_username} --password-stdin"
                 }
