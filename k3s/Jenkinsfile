@@ -36,10 +36,10 @@ pipeline {
             steps {
                 script {
                     echo "Building frontend Docker image"
-                    sh '''
+                    sh """
                     cd frontend/vue3-project-screening
                     docker build -t ${env.FRONTEND_IMAGE} -f ./Dockerfile .
-                    '''
+                    """
                 }
             }
         }
