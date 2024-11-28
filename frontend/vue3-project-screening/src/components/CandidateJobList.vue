@@ -1,6 +1,19 @@
 <template>
   <div class="job-list-container">
     <h2>Job List</h2>
+
+
+    <input
+        type="text"
+        v-model="searchQuery"
+        placeholder="Search job titles..."
+        class="search-input"
+    />
+
+
+
+
+
     <table class="job-table">
       <thead>
       <tr>
@@ -56,10 +69,19 @@ export default {
       jobs: [], // Array to store job data
       currentPage: 1, // Current page
       rowsPerPage: 5, // Jobs per page
+      searchQuery: '',
       errorMessage: ''
     };
   },
   computed: {
+
+    filteredJobs() {
+      if (!this.searchQuery) {
+        return this.jobs; // Return all jobs if there's no search query
+      }
+      const query = this.searchQuery.toLowerCase();
+      return this.jobs.filter(job => job.title.toLowerCase().includes(query));
+    },
     // Calculate total pages based on number of jobs and rows per page
     totalPages() {
       return Math.ceil(this.jobs.length / this.rowsPerPage);
@@ -68,7 +90,7 @@ export default {
     paginatedJobs() {
       const start = (this.currentPage - 1) * this.rowsPerPage;
       const end = start + this.rowsPerPage;
-      return this.jobs.slice(start, end);
+      return this.filteredJobs.slice(start, end);
     },
   },
   methods: {
@@ -152,5 +174,19 @@ h1, h2 {
 
 .pagination-controls span {
   align-self: center;
+}
+
+
+
+
+
+
+
+.search-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 </style>

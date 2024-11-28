@@ -8,129 +8,157 @@ pipeline {
         stage('Get Version') {
             steps {
                 script {
-                    // Checkout the 'master' branch
                     sh 'git checkout master'
-
-                    // Get the commit hash for the 'master' branch
-                    def commitHash = sh(script: "git rev-parse --short master", returnStdout: true).trim()
-
-                    // Construct version string (use the commit hash in the versioning)
-                    def version = "1.0.0-${commitHash}"
+                    def version = sh(script: "git describe --tags --always", returnStdout: true).trim()
                     echo "Using generated version: ${version}"
 
-                    // Use the version in the image tag
-                    env.BACKEND_IMAGE = "ghcr.io/panos994/application-submission-and-pre-screening-system-based-on-resume-analysis/backend:${version}"
-                    env.FRONTEND_IMAGE = "ghcr.io/panos994/application-submission-and-pre-screening-system-based-on-resume-frontend:${version}"
+                    env.BACKEND_IMAGE = "${BACKEND_IMAGE}:${version}"
+                    env.FRONTEND_IMAGE = "${FRONTEND_IMAGE}:${version}"
                 }
             }
         }
 
-          stage('Build Backend Image') {
-                      steps {
-                          script {
-                              echo "Building backend Docker image"
-
-                              // Use OpenJDK 17 base image and install Maven through apk
-                              sh '''
-                              docker run --rm -v $(pwd):/app -w /app openjdk:17-alpine sh -c "
-                              apk update && apk add --no-cache curl bash maven && \
-                              mvn clean package -DskipTests
-                              "
-                              '''
-                              // Build the backend Docker image using the JAR file
-                              sh "docker build -t ${BACKEND_IMAGE} -f ./Dockerfile ."
-                          }
-                      }
-          }
+        stage('Build Backend Image') {
+            steps {
+                script {
+                    echo "Building backend Docker image"
+                    sh '''
+                    docker run --rm -v $(pwd):/app -w /app openjdk:17-alpine sh -c "
+                    apk update && apk add --no-cache curl bash maven && \
+                    mvn clean package -DskipTests"
+                    '''
+                    sh "docker build -t ${env.BACKEND_IMAGE} -f ./Dockerfile ."
+                }
+            }
+        }
 
         stage('Build Frontend Image') {
             steps {
                 script {
                     echo "Building frontend Docker image"
-                    // Build the frontend Docker image
-                     sh '''
-                     cd frontend/vue3-project-screening
-                     docker build -t $FRONTEND_IMAGE -f ./Dockerfile .
-                     '''
+                    sh '''
+                    cd frontend/vue3-project-screening
+                    docker build -t ${env.FRONTEND_IMAGE} -f ./Dockerfile .
+                    '''
                 }
             }
         }
 
         stage('Docker Login to GHCR') {
             steps {
-                script {
-                    def github_username = "Panos994"
-                    def github_token = "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"
-                    // Log in to GHCR using the token and username
-                    sh "echo ${github_token} | docker login ghcr.io -u ${github_username} --password-stdin"
+                withCredentials([string(credentialsId: 'ghcr-token', variable: 'GITHUB_TOKEN')]) {
+                    sh "echo ${GITHUB_TOKEN} | docker login ghcr.io -u ${GITHUB_USER} --password-stdin"
                 }
             }
         }
 
-        stage('Push Backend Image') {
-            steps {
-                script {
-                    echo "Pushing backend Docker image to GHCR"
-                    // Push the backend image to GHCR
-                    sh "docker push $BACKEND_IMAGE"
+        stage('Push Images to GHCR') {
+            parallel {
+                stage('Push Backend') {
+                    steps {
+                        sh "docker push ${env.BACKEND_IMAGE}"
+                    }
+                }
+                stage('Push Frontend') {
+                    steps {
+                        sh "docker push ${env.FRONTEND_IMAGE}"
+                    }
                 }
             }
         }
 
-        stage('Push Frontend Image') {
+        stage('Pull Images on Deployment Server') {
             steps {
                 script {
-                    echo "Pushing frontend Docker image to GHCR"
-                    // Push the frontend image to GHCR
-                    sh "docker push $FRONTEND_IMAGE"
+                    echo "Pulling backend and frontend Docker images on the server"
+                    sh "docker pull ${env.BACKEND_IMAGE}"
+                    sh "docker pull ${env.FRONTEND_IMAGE}"
                 }
-            }
-        }
-
-        stage('Pull Backend Image') {
-            steps {
-                sh 'docker pull $BACKEND_IMAGE'
-            }
-        }
-
-        stage('Pull Frontend Image') {
-            steps {
-                sh 'docker pull $FRONTEND_IMAGE'
             }
         }
 
         stage('Deploy to Kubernetes') {
             environment {
-                KUBECONFIG = '/etc/rancher/k3s/k3s.yaml' // Path to kubeconfig file on EC2 instance
+                KUBECONFIG = '/etc/rancher/k3s/k3s.yaml'
             }
             steps {
-                // Apply database and MinIO manifests using relative paths from the repository
-                sh 'sudo kubectl apply -f k3s/database/deployment.yaml'
-                sh 'sudo kubectl apply -f k3s/database/service.yaml'
-                sh 'sudo kubectl apply -f k3s/minio'
+                sh '''
+                kubectl apply -f k3s/database/deployment.yaml
+                kubectl apply -f k3s/database/service.yaml
+                kubectl apply -f k3s/minio
+                kubectl apply -f k3s/backend/deployment.yaml
+                kubectl apply -f k3s/backend/service.yaml
+                kubectl apply -f k3s/frontend/deployment.yaml
+                kubectl apply -f k3s/frontend/service.yaml
+                '''
 
-                // Apply the backend and frontend images from GitHub Packages
-                sh 'sudo kubectl apply -f k3s/backend/deployment.yaml'  // Path to backend deployment.yaml
-                sh 'sudo kubectl apply -f k3s/backend/service.yaml'     // Path to backend service.yaml
+                // Set images for deployments
+                sh "kubectl set image deployment/spring-backend spring-backend=${env.BACKEND_IMAGE} --record"
+                sh "kubectl set image deployment/vue-frontend vue-frontend=${env.FRONTEND_IMAGE} --record"
 
-                // Ensure backend deployment exists, or create it if it doesn't
-                script {
-                    def backendDeploymentExists = sh(script: "kubectl get deployment spring-backend -o name", returnStatus: true) == 0
-                    if (!backendDeploymentExists) {
-                        echo "Backend deployment not found, creating it."
-                        // Create the backend deployment if it doesn't exist
-                        sh 'sudo kubectl apply -f k3s/backend/deployment.yaml'  // Applying backend deployment if it doesn't exist
-                    }
-                }
-
-                // Set the images for the backend and frontend deployments
-                sh 'sudo kubectl set image deployment/spring-backend spring-backend=$BACKEND_IMAGE'
-                sh 'sudo kubectl set image deployment/vue-frontend vue-frontend=$FRONTEND_IMAGE'
+                // Rollout verification
+                sh '''
+                kubectl rollout status deployment/spring-backend
+                kubectl rollout status deployment/vue-frontend
+                '''
             }
         }
     }
 }
 
 
-// build part και push στο container registry (eite se auto eite se allo)
-//prepei na skefto kai mixanismo versioning (semantic versioning)
+
+//added Build part (Build backend and Build Frontend + Push to the container registry)
+//added semantic versioning method: Get Version stage generates a version using --> def version = "1.0.0-${commitHash}"
+//This creates a version based on a fixed major, minor, and patch number (1.0.0) combined with the short commit hash. This kind of mechanism ensures that each build has a unique version tied to the Git commit.
+
+
+
+//Definition of semantic versioning:
+//Semantic Versioning (SemVer) is a versioning scheme designed to convey meaning about the underlying changes in a software release. It follows a structured format of MAJOR.MINOR.PATCH and is widely used in software development to manage and communicate version updates effectively.
+  //Format: MAJOR.MINOR.PATCH
+
+    //  MAJOR version (e.g., 1.0.0):
+    //  Incremented when making backward-incompatible changes. This indicates that changes might break existing dependencies.
+
+   //   MINOR version (e.g., 1.1.0):
+   //   Incremented when adding backward-compatible features. New functionalities are introduced without breaking existing code.
+
+   //   PATCH version (e.g., 1.0.1):
+    //  Incremented when making backward-compatible bug fixes. This covers minor improvements or corrections that don't affect the public API.
+
+  //Examples:
+
+      //1.2.3
+      //    1: Major version → Significant, breaking changes.
+       //   2: Minor version → New features, but backward-compatible.
+      //    3: Patch version → Bug fixes or small improvements.
+
+//  Additional Labels:
+
+    //  Pre-release versions:
+   //   For versions under development (e.g., 1.0.0-beta, 1.2.3-alpha).
+  //    Build metadata:
+  //    Used for additional build info (e.g., 1.0.0+build.123).
+
+  //Why Use Semantic Versioning?
+
+     // Clarity:
+    //  Easily understand the impact of an update.
+    //  Dependency management:
+   //   Helps teams or systems determine whether to upgrade.
+    //  Consistency:
+    //  Standardizes version control across teams or projects.
+
+  //Workflow:
+
+    //  Bug fix: Update the PATCH version (e.g., 1.0.0 → 1.0.1).
+  //    New feature: Update the MINOR version (e.g., 1.0.0 → 1.1.0).
+   //   Breaking change: Update the MAJOR version (e.g., 1.0.0 → 2.0.0).
+
+  //Tools for Automation:
+
+   //   Manual control: Maintain version numbers in a VERSION file.
+    //  Automated: Tools like semantic-release automate version management based on commit messages.
+
+  //Semantic versioning provides a clear and predictable way to handle software updates, ensuring users and developers understand changes and compatibility.

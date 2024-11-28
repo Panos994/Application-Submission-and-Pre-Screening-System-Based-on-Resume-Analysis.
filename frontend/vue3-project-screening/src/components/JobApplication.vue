@@ -52,7 +52,7 @@
     <!-- Displaying the manual score after submission -->
 
 
-    <br><br><br>
+    <br><br>
 
     <hr>
 
