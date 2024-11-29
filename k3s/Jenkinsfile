@@ -85,36 +85,39 @@ pipeline {
                 KUBECONFIG = '/etc/rancher/k3s/k3s.yaml'
             }
             steps {
-                sh '''
-                sudo kubectl apply -f k3s/database/deployment.yaml
-                sudo kubectl apply -f k3s/database/service.yaml
-                sudo kubectl apply -f k3s/minio
-                sudo kubectl apply -f k3s/backend/deployment.yaml
-                sudo kubectl apply -f k3s/backend/service.yaml
-                sudo kubectl apply -f k3s/frontend/deployment.yaml
-                sudo kubectl apply -f k3s/frontend/service.yaml
-                '''
+                script {
+                    sh '''
+                    sudo kubectl apply -f k3s/database/deployment.yaml
+                    sudo kubectl apply -f k3s/database/service.yaml
+                    sudo kubectl apply -f k3s/minio
+                    sudo kubectl apply -f k3s/backend/deployment.yaml
+                    sudo kubectl apply -f k3s/backend/service.yaml
+                    sudo kubectl apply -f k3s/frontend/deployment.yaml
+                    sudo kubectl apply -f k3s/frontend/service.yaml
+                    '''
 
-                // Set images for deployments
-                sh "sudo kubectl set image deployment/spring-backend spring-backend=${env.BACKEND_IMAGE} --record"
-                sh "sudo kubectl set image deployment/vue-frontend vue-frontend=${env.FRONTEND_IMAGE} --record"
+                    // Set images for deployments
+                    sh "sudo kubectl set image deployment/spring-backend spring-backend=${env.BACKEND_IMAGE} --record"
+                    sh "sudo kubectl set image deployment/vue-frontend vue-frontend=${env.FRONTEND_IMAGE} --record"
 
-                // Rollout verification with enhanced error handling
-                try {
-                    echo "Waiting for backend rollout to finish..."
-                    sh "sudo kubectl rollout status deployment/spring-backend --timeout=300s"
+                    // Rollout verification with enhanced error handling
+                    try {
+                        echo "Waiting for backend rollout to finish..."
+                        sh "sudo kubectl rollout status deployment/spring-backend --timeout=100s"
 
-                    echo "Waiting for frontend rollout to finish..."
-                    sh "sudo kubectl rollout status deployment/vue-frontend --timeout=300s"
-                } catch (Exception e) {
-                    echo "Deployment failed! Error: ${e.message}"
-                    currentBuild.result = 'FAILURE'
-                    error("Kubernetes rollout failed")
+                        echo "Waiting for frontend rollout to finish..."
+                        sh "sudo kubectl rollout status deployment/vue-frontend --timeout=100s"
+                    } catch (Exception e) {
+                        echo "Deployment failed! Error: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        error("Kubernetes rollout failed")
+                    }
                 }
             }
         }
     }
 }
+
 
 
 //added Build part (Build backend and Build Frontend + Push to the container registry)
