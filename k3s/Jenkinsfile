@@ -45,14 +45,14 @@ pipeline {
         }
 
         stage('Docker Login to GHCR') {
-              steps {
-                   script {
-                        def github_username = "Panos994"
-                        def github_token = "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"
-                        // Log in to GHCR using the token and username
-                        sh "echo ${github_token} | docker login ghcr.io -u ${github_username} --password-stdin"
-                   }
-              }
+            steps {
+                script {
+                    def github_username = "Panos994"
+                    def github_token = "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"
+                    // Log in to GHCR using the token and username
+                    sh "echo ${github_token} | docker login ghcr.io -u ${github_username} --password-stdin"
+                }
+            }
         }
 
         stage('Push Images to GHCR') {
@@ -99,19 +99,22 @@ pipeline {
                 sh "sudo kubectl set image deployment/spring-backend spring-backend=${env.BACKEND_IMAGE} --record"
                 sh "sudo kubectl set image deployment/vue-frontend vue-frontend=${env.FRONTEND_IMAGE} --record"
 
-                // Rollout verification
+                // Rollout verification with enhanced error handling
                 try {
-                    sh "sudo kubectl rollout restart deployment/spring-backend --timeout=600s"
-                    sh "sudo kubectl rollout restart deployment/vue-frontend --timeout=600s"
+                    echo "Waiting for backend rollout to finish..."
+                    sh "sudo kubectl rollout status deployment/spring-backend --timeout=300s"
+
+                    echo "Waiting for frontend rollout to finish..."
+                    sh "sudo kubectl rollout status deployment/vue-frontend --timeout=300s"
                 } catch (Exception e) {
-                    echo "Deployment failed!"
+                    echo "Deployment failed! Error: ${e.message}"
+                    currentBuild.result = 'FAILURE'
                     error("Kubernetes rollout failed")
                 }
             }
         }
     }
 }
-
 
 
 //added Build part (Build backend and Build Frontend + Push to the container registry)
