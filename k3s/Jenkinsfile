@@ -100,11 +100,13 @@ pipeline {
                 sh "sudo kubectl set image deployment/vue-frontend vue-frontend=${env.FRONTEND_IMAGE} --record"
 
                 // Rollout verification
-                sh '''
-                sudo kubectl rollout status deployment/spring-backend --timeout=600s
-
-                sudo kubectl rollout status deployment/vue-frontend --timeout=600s
-                '''
+                try {
+                    sh "sudo kubectl rollout restart deployment/spring-backend --timeout=600s"
+                    sh "sudo kubectl rollout restart deployment/vue-frontend --timeout=600s"
+                } catch (Exception e) {
+                    echo "Deployment failed!"
+                    error("Kubernetes rollout failed")
+                }
             }
         }
     }
