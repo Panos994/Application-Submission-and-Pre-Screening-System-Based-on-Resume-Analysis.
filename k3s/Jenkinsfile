@@ -86,23 +86,23 @@ pipeline {
             }
             steps {
                 sh '''
-                kubectl apply -f k3s/database/deployment.yaml
-                kubectl apply -f k3s/database/service.yaml
-                kubectl apply -f k3s/minio
-                kubectl apply -f k3s/backend/deployment.yaml
-                kubectl apply -f k3s/backend/service.yaml
-                kubectl apply -f k3s/frontend/deployment.yaml
-                kubectl apply -f k3s/frontend/service.yaml
+                sudo kubectl apply -f k3s/database/deployment.yaml
+                sudo kubectl apply -f k3s/database/service.yaml
+                sudo kubectl apply -f k3s/minio
+                sudo kubectl apply -f k3s/backend/deployment.yaml
+                sudo kubectl apply -f k3s/backend/service.yaml
+                sudo kubectl apply -f k3s/frontend/deployment.yaml
+                sudo kubectl apply -f k3s/frontend/service.yaml
                 '''
 
                 // Set images for deployments
-                sh "kubectl set image deployment/spring-backend spring-backend=${env.BACKEND_IMAGE} --record"
-                sh "kubectl set image deployment/vue-frontend vue-frontend=${env.FRONTEND_IMAGE} --record"
+                sh "sudo kubectl set image deployment/spring-backend spring-backend=${env.BACKEND_IMAGE} --record"
+                sh "sudo kubectl set image deployment/vue-frontend vue-frontend=${env.FRONTEND_IMAGE} --record"
 
                 // Rollout verification
                 sh '''
-                kubectl rollout status deployment/spring-backend
-                kubectl rollout status deployment/vue-frontend
+                sudo kubectl rollout status deployment/spring-backend
+                sudo kubectl rollout status deployment/vue-frontend
                 '''
             }
         }
