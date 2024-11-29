@@ -48,7 +48,7 @@ pipeline {
               steps {
                    script {
                         def github_username = "Panos994"
-                        def github_token = "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"
+                        def github_token = "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"
                         // Log in to GHCR using the token and username
                         sh "echo ${github_token} | docker login ghcr.io -u ${github_username} --password-stdin"
                    }
@@ -101,8 +101,9 @@ pipeline {
 
                 // Rollout verification
                 sh '''
-                sudo kubectl rollout status deployment/spring-backend
-                sudo kubectl rollout status deployment/vue-frontend
+                sudo kubectl rollout status deployment/spring-backend --timeout=600s
+
+                sudo kubectl rollout status deployment/vue-frontend --timeout=600s
                 '''
             }
         }
