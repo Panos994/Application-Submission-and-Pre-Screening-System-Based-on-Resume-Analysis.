@@ -46,11 +46,12 @@ pipeline {
 
         stage('Docker Login to GHCR') {
             steps {
-                script {
-                    def github_username = "Panos994"
-                    def github_token = "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"
-                    // Log in to GHCR using the token and username
-                    sh "echo ${github_token} | docker login ghcr.io -u ${github_username} --password-stdin"
+                withCredentials([string(credentialsId: 'github_token', variable: 'GITHUB_TOKEN')]) {
+                    script {
+                        def github_username = "Panos994"
+                             // Log in to GHCR using the token from Jenkins credentials
+                        sh "echo ${GITHUB_TOKEN} | docker login ghcr.io -u ${github_username} --password-stdin"
+                    }
                 }
             }
         }
