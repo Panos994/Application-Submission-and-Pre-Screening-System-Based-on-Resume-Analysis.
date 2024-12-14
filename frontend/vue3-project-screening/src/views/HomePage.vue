@@ -1,7 +1,7 @@
 <!-- HomePage.vue -->
 <template>
   <div>
-    <center><h1> Resume Analysis with AI Agent </h1></center>
+    <center>  <h1 class="animated-title">Resume Analysis with AI Agent</h1></center>
 
     <br><br> <br><br> <br><br> <br><br> <br><br> <br><br>
     <center><b><p>Please <button class="button-Login"><router-link to="/login">Login</router-link></button> | <button class="button-signup"><router-link to="/signup">Sign Up</router-link></button> to continue.</p></b> </center>
@@ -20,6 +20,58 @@ export default {
 
 
 <style>
+
+.animated-title {
+  font-size: 3rem; /* Larger font size for emphasis */
+  font-weight: bold;
+  color: #ccc; /* Slightly darker text color */
+  text-shadow:
+      1px 1px 2px rgba(0, 0, 0, 0.5),
+      0 0 8px #1c6b8e,
+      0 0 16px #145f78,
+      0 0 32px #0e4f5d,
+      0 0 64px #0a3f47; /* Darker glow colors */
+  animation: pulse 2s infinite, moveText 6s infinite alternate;
+  transform: perspective(1000px) rotateX(20deg);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    text-shadow:
+        1px 1px 2px rgba(0, 0, 0, 0.5),
+        0 0 8px #1c6b8e,
+        0 0 16px #145f78,
+        0 0 32px #0e4f5d,
+        0 0 64px #0a3f47;
+  }
+  50% {
+    text-shadow:
+        1px 1px 2px rgba(0, 0, 0, 0.5),
+        0 0 16px #0e4f5d,
+        0 0 32px #0a3f47,
+        0 0 64px #073539;
+  }
+}
+
+@keyframes moveText {
+  0% {
+    transform: perspective(1000px) rotateX(20deg) translateY(0);
+  }
+  100% {
+    transform: perspective(1000px) rotateX(-20deg) translateY(-10px);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

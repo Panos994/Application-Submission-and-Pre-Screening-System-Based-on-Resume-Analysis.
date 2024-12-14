@@ -6,15 +6,15 @@
       <div class="sidebar-links">
         <router-link to="/about" class="sidebar-link">About</router-link>
         <router-link to="/more" class="sidebar-link">More</router-link>
-        <router-link to="/info" class="sidebar-link">Info</router-link>
+        <router-link to="/info" class="sidebar-link">Help</router-link>
       </div>
-      <button class="logout-btn" @click="logout">Log out also from here</button>
+      <button class="logout-btn" @click="logout">Exit also from here </button>
     </div>
 
     <!-- Main Content Area -->
     <div class="main-content">
       <header class="header">
-        <h1>CRM | Job Portal</h1>
+        <h1 class="title-3d">CRM | Job Portal</h1>
         <nav class="navbar">
           <router-link to="/" class="home-link">Home</router-link>
           <button class="logout-btn" @click="logout">Log Out</button>
@@ -111,9 +111,11 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #333;
+  background-color: #222;
   color: white;
   padding: 1rem;
+  position: relative;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.4);
 }
 
 .navbar {
@@ -130,6 +132,56 @@ export default {
 
 .home-link:hover, .navbar a:hover {
   text-decoration: underline;
+}
+
+
+
+
+
+
+
+
+.title-3d {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0;
+  position: relative;
+  animation: fadeInTitle 2s ease-in-out;
+  background: linear-gradient(135deg, #ffcc00, #ff66cc); /* Brighter gradient */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6),
+  -1px -1px 5px rgba(255, 255, 255, 0.4);
+}
+
+.title-3d:hover {
+  animation: bounce 1s ease infinite;
+  cursor: pointer;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7),
+  -2px -2px 8px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes fadeInTitle {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 </style>
 
