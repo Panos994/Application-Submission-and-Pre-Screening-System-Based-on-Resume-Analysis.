@@ -8,7 +8,7 @@
       <div class="progress-container">
         <!-- Name/Label before progress bar -->
         <div class="score-label">
-          <strong> Score:</strong>
+          <strong> Score: {{ manualScore }}%</strong>
         </div>
         <svg class="progress-circle" viewBox="0 0 36 36">
           <path class="circle-bg" d="M18 2a16 16 0 1 1 0 32 16 16 0 0 1 0-32" />
@@ -19,7 +19,7 @@
           />
         </svg>
         <div class="progress-value">
-          {{ manualScore }}%
+
         </div>
       </div>
     </div>

@@ -45,6 +45,7 @@ export default {
   display: flex;
   height: 100vh;
   overflow: hidden; /* Prevents page overflow */
+  background-color: #d3d3d3;
 }
 
 /* Sidebar Styling */
