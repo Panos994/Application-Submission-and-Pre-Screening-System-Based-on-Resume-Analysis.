@@ -3,7 +3,10 @@
   <div class="container">
 
     <div class="form-container">
-      <h1>Job Postings</h1>
+
+
+
+      <h1>Welcome, {{ username }}. Start adding your Job Postings</h1>
       <form @submit.prevent="submitJob">
 
 
@@ -270,6 +273,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
+      username: localStorage.getItem("username") || "User",
       job: {
 
         title: '',

@@ -186,6 +186,19 @@
 		<!-- - -->
 
 
+
+
+
+
+		<!-- Stripe dependency -->
+
+		<dependency>
+			<groupId>com.stripe</groupId>
+			<artifactId>stripe-java</artifactId>
+			<version>23.0.0</version>
+		</dependency>
+
+
 	</dependencies>
 	<build>
 		<plugins>

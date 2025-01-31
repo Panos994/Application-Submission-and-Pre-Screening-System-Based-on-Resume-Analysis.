@@ -1,4 +1,4 @@
-<!-- Candidate Page for apply for Job (either manually scored or AI-assisted proposal -->
+<!-- Candidate Page for apply for Job (either manually scored or AI-assisted proposal  -->
 
 <template>
   <div>
@@ -36,7 +36,7 @@
 
     <button><router-link to="/yourapplications">Check your applications Status</router-link></button>
     <br>
-    <h1>Apply for a Job</h1>
+    <h1>Welcome, {{username}}. Search, Apply and Get your Job Score:</h1>
 
     <!-- Manual Job Selection and Submission -->
     <label for="jobSelect">Select a Job (Manual):</label>
@@ -78,10 +78,17 @@
     <br><br>
 
 
+<!-- stripe's trial -->
 
 
+    <!--div>
+      <h1>Subscription Plans</h1>
+      <button @click="subscribe('monthly')">Subscribe Monthly (€1.50)</button>
+      <button @click="subscribe('6month')">Subscribe for 6 Months (€6.00)</button>
+      <button @click="subscribe('yearly')">Subscribe Annually (€10.00)</button>
+    </div-->
 
-
+<!-- end of stripe's trial -->
 
   </div>
 </template>
@@ -93,6 +100,7 @@ export default {
   name: 'JobApplication',
   data() {
     return {
+      username: localStorage.getItem("username") || "User",
       resumeFile: null,      // To store uploaded resume
       selectedJobId: null,   // To store selected job
       jobs: [],              // List of jobs
@@ -230,6 +238,30 @@ export default {
         console.error('Error fetching jobs:', error);
       }
     },
+
+    //stripe - trial
+/*
+    async subscribe(plan) {
+      const customerId = localStorage.getItem('customerId');
+      if (!customerId) {
+        alert('Customer ID is missing. Please log in.');
+        return;
+      }
+
+      try {
+        const response = await axios.post('http://localhost:9090/api/match/subscribe', {
+          customerId,
+          plan
+        });
+        alert(response.data);
+      } catch (error) {
+        console.error('Subscription error:', error);
+        alert('Subscription failed. Please try again.');
+      }
+    },
+*/
+    // end of stripe's trial
+
 
     resetForm() {
       this.selectedJobId = null;

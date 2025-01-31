@@ -7,6 +7,8 @@
         <router-link to="/about" class="sidebar-link">About</router-link>
         <router-link to="/more" class="sidebar-link">More</router-link>
         <router-link to="/info" class="sidebar-link">Help</router-link>
+
+
       </div>
       <button class="logout-btn" @click="logout">Exit also from here </button>
     </div>
@@ -16,6 +18,11 @@
       <header class="header">
         <h1 class="title-3d">CRM | Job Portal</h1>
         <nav class="navbar">
+
+          <!-- Display Username -->
+          <span v-if="this.username" class="username">Welcome, {{ username }}</span>
+
+          <br>
           <router-link to="/" class="home-link">Home</router-link>
           <button class="logout-btn" @click="logout">Log Out</button>
         </nav>
@@ -30,9 +37,39 @@
 
 <script>
 export default {
+
+
+  data() {
+    return {
+      username: localStorage.getItem("username") || null, // Default to null if not found
+    };
+  },
+
+  mounted() {
+    window.addEventListener("storage", this.getUsername); // Listen for storage updates
+  },
+
+  beforeUnmount() {
+    window.removeEventListener("storage", this.getUsername); // Cleanup
+  },
+
+
+
   methods: {
+
+    getUsername(){
+      this.username = localStorage.getItem("username") || null;
+
+    },
+
+
+
+
+
     logout() {
       localStorage.removeItem('authToken');
+      localStorage.removeItem("username"); // Clear username from storage
+      this.username = null; // Reset in data
       this.$router.push('/');
     },
   },
@@ -185,4 +222,3 @@ export default {
   }
 }
 </style>
-

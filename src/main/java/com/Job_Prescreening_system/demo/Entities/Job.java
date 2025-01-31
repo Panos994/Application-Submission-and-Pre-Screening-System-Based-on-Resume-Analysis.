@@ -16,13 +16,19 @@ public class Job {
     private Long id;
 
 
-
+    @Column(name = "title", length = 5000)
     private String title;
+
+    @Column(name = "description", length = 5000)
     private String description;
+
+
+    @Column(name = "required_skills", length = 5000)
     private String requiredSkills; // Store as a comma-separated string or JSON
     //private int minExperience;
     @Column(name = "min_experience", nullable = true)
     private Integer minExperience;
+    @Column(name = "education_level", length = 5000)
     private String educationLevel;
 
 
@@ -33,8 +39,12 @@ public class Job {
 
     // Getters and setters
     private Double topMatchScore;
+
+    @Column(name = "top_cv_file_name", length = 5000)
     private String topCvFileName;
 
+
+    @Column(name = "top_cv_file_names", length = 5000)
     private String topCvFileNames;
 
     // Criteria weights
@@ -170,9 +180,9 @@ public class Job {
         this.applications = applications;
     }
 
-
+    @Column(name = "institution_type", length = 5000)
     private String institutionType;
-
+    @Column(name = "university_preference", length = 5000)
     private String universityPreference;
 
 
@@ -197,9 +207,13 @@ public class Job {
 
 
 
+    @Column(name = "location", length = 5000)
     private String location; // e.g., Athens, Greece
+    @Column(name = "sector", length = 5000)
     private String sector; // e.g., Informatics, Marketing
+    @Column(name = "work_type", length = 5000)
     private String workType; // e.g., full time, part time, remote
+    @Column(name = "job_level", length = 5000)
     private String jobLevel; //
 
     public String getLocation() {

@@ -1,6 +1,7 @@
 <!-- Admin Page for User Management (update in buttons)-->
 <template>
   <div>
+    <h2>Welcome, {{username}}</h2>
     <h1 class="text-3xl font-bold mb-6 custom-header"><center>Users</center></h1>
 
     <!-- Displaying users -->
@@ -84,6 +85,7 @@ const roleMapping = {
 export default {
   data() {
     return {
+      username: localStorage.getItem("username") || "User",
       users: [], // Array of users
       currentPage: 1, // Current page --- adding pagination
       rowsPerPage: 5, // Rows per page --- adding pagination
