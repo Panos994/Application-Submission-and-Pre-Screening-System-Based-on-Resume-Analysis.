@@ -193,6 +193,23 @@
     </div>
 
 
+    <v-dialog v-model="showSuccessModal" max-width="400px">
+      <v-card>
+        <v-card-title class="text-h5">Success</v-card-title>
+        <v-card-text>Job saved successfully!</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="closeModal">OK</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
+
+
+
+
+
 
     <div class="job-list-container">
 
@@ -271,6 +288,12 @@
 import axios from 'axios';
 
 export default {
+
+
+
+
+
+
   data() {
     return {
       username: localStorage.getItem("username") || "User",
@@ -300,6 +323,9 @@ export default {
         skills: 0
       },
       jobs: [],
+
+      showSuccessModal: false, // Controls the visibility of the modal //////
+
       errorMessage: ''
     };
   },
@@ -357,7 +383,10 @@ export default {
           }
         });
 
-        alert('Job saved successfully!');
+        //alert('Job saved successfully!');
+
+        this.showSuccessModal = true;   /////
+
         this.resetForm();
         await this.fetchJobs(); //this.fetchJobs();
       } catch (error) {
@@ -369,6 +398,16 @@ export default {
         }
       }
     },
+
+
+
+    closeModal() {
+      this.showSuccessModal = false;   ////////////
+    },
+
+
+
+
     resetForm() {
       this.job = {
 
@@ -538,5 +577,30 @@ label {
 
 .job-table th {
   background-color: #f8f9fa;
+}
+
+
+
+
+
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
 }
 </style>

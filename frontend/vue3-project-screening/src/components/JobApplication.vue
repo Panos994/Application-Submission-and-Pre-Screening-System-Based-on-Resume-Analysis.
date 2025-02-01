@@ -91,6 +91,19 @@
 <!-- end of stripe's trial -->
 
   </div>
+
+  <v-dialog v-model="showSuccessModal" max-width="400px">
+    <v-card>
+      <v-card-title class="text-h5">Success</v-card-title>
+      <v-card-text>AI job matching complete! Check your results.</v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="primary" @click="closeModal">OK</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+
 </template>
 
 <script>
@@ -107,7 +120,9 @@ export default {
       scoreMessage: '',      // Message displaying score after manual submission
       manualScore: 0,
       aiResponseData: '',    // Raw AI response data
-      showTyping: false      // To control the typing effect
+      showTyping: false,      // To control the typing effect
+
+      showSuccessModal: false, // Controls the visibility of the modal //////
     };
   },
 
@@ -142,6 +157,8 @@ export default {
     async submitManualResume() {
       if (!this.resumeFile || !this.selectedJobId) {
         alert('Please select a job and upload your resume.');
+
+
         return;
       }
 
@@ -212,7 +229,9 @@ export default {
         this.aiResponseData = formattedResponse;
         this.showTyping = true;  // Start typing effect
 
-        alert('AI job matching complete! Check your results.');
+        //alert('AI job matching complete! Check your results.');
+
+        this.showSuccessModal = true;   /////
 
       } catch (error) {
         console.error('Error matching job:', error);
@@ -222,6 +241,10 @@ export default {
           alert('An error occurred while matching the job.');
         }
       }
+    },
+
+    closeModal() {
+      this.showSuccessModal = false;   ////////////
     },
 
     // Fetch available jobs from backend for manual matching
