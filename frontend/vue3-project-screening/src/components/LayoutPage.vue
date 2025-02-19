@@ -20,7 +20,7 @@
         <nav class="navbar">
 
           <!-- Display Username -->
-          <span v-if="this.username" class="username">Welcome, {{ username }}</span>
+          <!--span v-if="this.username" class="username">Welcome, {{ username }}</span-->
 
           <br>
           <router-link to="/" class="home-link">Home</router-link>
