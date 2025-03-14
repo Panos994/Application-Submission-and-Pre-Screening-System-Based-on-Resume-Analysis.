@@ -8,14 +8,13 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
-
 @Service
 public class GPTService {
 
     private static final Logger logger = Logger.getLogger(GPTService.class);
 
-    // OpenAI - API key inside application.properties
     @Value("${ApiKey}")
     private String API_KEY;
 
@@ -27,21 +26,17 @@ public class GPTService {
 
         String gptApiUrl = "https://api.openai.com/v1/chat/completions";
 
-        // Create headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + API_KEY);
 
-        // Build JSON request body
         JSONObject requestBody = new JSONObject();
         requestBody.put("model", "gpt-3.5-turbo");
         requestBody.put("messages", generateMessages(resumeText, jobList));
-        requestBody.put("max_tokens", 250);  // Increase tokens to accommodate the response for top 3 jobs
+        requestBody.put("max_tokens", 250);
 
-        // Create HttpEntity with headers and request body
         HttpEntity<String> entity = new HttpEntity<>(requestBody.toString(), headers);
 
-        // Make the POST request using RestTemplate
         RestTemplate restTemplate = new RestTemplate();
         try {
             ResponseEntity<String> response = restTemplate.exchange(gptApiUrl, HttpMethod.POST, entity, String.class);
@@ -49,7 +44,7 @@ public class GPTService {
                 logger.error("Failed to get response from OpenAI API: " + response.getStatusCode());
                 return "Error analyzing resume and matching jobs.";
             }
-            return parseResponse(response.getBody());
+            return parseResponse(response.getBody(), jobList);
         } catch (Exception e) {
             logger.error("Exception occurred while calling OpenAI API: " + e.getMessage(), e);
             return "Error analyzing resume and matching jobs.";
@@ -79,8 +74,7 @@ public class GPTService {
         return prompt.toString();
     }
 
-
-    private String parseResponse(String responseBody) {
+    private String parseResponse(String responseBody, List<Job> jobList) {
         JSONObject jsonResponse = new JSONObject(responseBody);
         logger.info("OpenAI Response: " + jsonResponse.toString());
 
@@ -97,10 +91,30 @@ public class GPTService {
             }
         }
 
-        // Append link to the CandidateJobList page
-        String additionalInfo = "\n\nFor checking these job opportunities, please visit: " +
-                "<a href=\"/CandidateJobList\">Check Available Job Positions</a>";
-        return aiResponse + additionalInfo;
+        // Extract top 3 job titles from AI response
+        List<String> topJobTitles = extractTopJobTitles(aiResponse);
+
+        StringBuilder responseWithLinks = new StringBuilder(aiResponse);
+        responseWithLinks.append("\n\nFor checking these job opportunities, please visit:\n");
+
+        for (Job job : jobList) {
+            if (topJobTitles.contains(job.getTitle())) {
+                responseWithLinks.append(String.format("<a href=\"/CandidateJobList?jobId=%d\">%s</a><br>", job.getId(), job.getTitle()));
+            }
+        }
+
+
+        return responseWithLinks.toString();
     }
 
+    private List<String> extractTopJobTitles(String aiResponse) {
+        List<String> topJobTitles = new ArrayList<>();
+        String[] lines = aiResponse.split("\n");
+        for (String line : lines) {
+            if (line.startsWith("1. Job Title:") || line.startsWith("2. Job Title:") || line.startsWith("3. Job Title:")) {
+                topJobTitles.add(line.substring(line.indexOf("Job Title:") + 11).trim());
+            }
+        }
+        return topJobTitles;
+    }
 }

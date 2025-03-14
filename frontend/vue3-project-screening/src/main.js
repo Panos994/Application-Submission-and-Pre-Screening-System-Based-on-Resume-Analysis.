@@ -19,7 +19,7 @@ import AdminUserManagement from "@/components/AdminUserManagement.vue";
 import LayoutPage from "@/components/LayoutPage.vue";
 import CandidateJobList from "@/components/CandidateJobList.vue";
 import ApplicationsPage from '@/components/ViewApplicationsCV.vue';
-
+import ModeratorJobList from '@/components/ModeratorJobList.vue';
 
 
 import AboutPage from '@/components/AboutPage.vue';
@@ -57,8 +57,8 @@ const routes = [
             { path: '/info', component: InfoPage },
 
 
-            {path: '/yourapplications', component: YourApplicationsPage}
-
+            {path: '/yourapplications', component: YourApplicationsPage},
+            {path: '/jobs', component: ModeratorJobList}
         ]
     }
 ];

@@ -209,74 +209,9 @@
 
 
 
+    <router-link to="/jobs">Go to Job List</router-link>
 
 
-    <div class="job-list-container">
-
-      <h2>Job List</h2>
-
-      <router-link to="/applications">Find and Download CVs through Candidates CV Files</router-link>
-      <table class="job-table">
-        <thead>
-        <tr>
-
-          <th>Title</th>
-          <th>Location</th>
-          <th>Department</th>
-          <th>Type of Employment</th>
-          <th>Job Level</th>
-
-
-
-
-          <th>Description</th>
-          <th>Education Level</th>
-          <th>Institution Type</th> <!-- Added Institution Type -->
-          <th>Preferred Universities</th> <!-- Added Preferred Universities -->
-
-
-
-
-
-
-          <th>Required Skills</th>
-          <th>Experience</th>
-          <th>Score Weights</th>
-          <th>Highest Candidates' Scores</th>
-          <th>Candidates CV Files</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="job in jobs" :key="job.id">
-
-          <td>{{ job.title }}</td>
-          <td>{{ job.location }}</td>
-          <td>{{ job.sector }}</td>
-          <td>{{ job.workType }}</td>
-          <td>{{ job.jobLevel }}</td>
-
-
-
-
-
-          <td>{{ job.description }}</td>
-          <td>{{ job.educationLevel }}</td>
-          <td>{{ job.institutionType }}</td> <!-- Added Institution Type -->
-          <td>{{ job.universityPreference }}</td>
-
-
-          <td>{{ job.requiredSkills }}</td>
-          <td>{{ job.minExperience }} years</td>
-          <td>Experience: {{ job.minExperienceWeight }}%, Education: {{ job.educationWeight }}%, Skills: {{ job.skillsWeight }}%</td>
-          <td>Highest Score: {{ job.topMatchScore || 'N/A' }} </td>
-          <td>CV Files: {{ job.topCvFileNames || 'N/A' }} </td>
-
-
-        </tr>
-        </tbody>
-      </table>
-      <button @click="exportToExcel" class="export-button">Export to Excel</button>
-    </div>
 
 
 
@@ -498,7 +433,7 @@ export default {
 
 .form-container {
   padding: 20px;
-  max-height: 45vh; /* Adjust height to fit content and page layout */
+  max-height: 80vh; /* Adjust height to fit content and page layout */
   overflow-y: auto;
   border: 1px solid #ccc; /* Optional, for visual separation */
   border-radius: 8px;

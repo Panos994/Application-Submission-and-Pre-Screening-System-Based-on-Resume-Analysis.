@@ -14,7 +14,8 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
 
 
-
+    // Add this method to find a job by its title
+    Job findByTitle(String title);
 
 
 }

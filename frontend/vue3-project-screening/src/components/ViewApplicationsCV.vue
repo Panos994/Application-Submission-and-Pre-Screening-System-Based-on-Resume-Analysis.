@@ -2,7 +2,8 @@
   <div>
 
     <!--h1 class="header">Applications</h1-->
-    <center><router-link to="/admin" class="back-link">Return Back to Job Postings Page</router-link></center>
+    <center><router-link to="/admin" class="back-link">Return Back to Job Post Page</router-link></center>
+    <router-link to="/jobs" class="back-link">Return Back to Job List</router-link>
     <!-- Search input -->
     <input
         type="text"
@@ -24,13 +25,11 @@
         </thead>
         <tbody>
         <!-- Filtered applications based on search query -->
-        <tr v-for="application in filteredApplications" :key="application.id">
+        <tr v-for="application in paginatedApplications" :key="application.id">
           <td>{{ application.id }}</td>
           <td>
             <button @click="downloadCV(application.id)" class="download-btn">Download CV</button>
           </td>
-
-
           <td>
             <label>
               <input
@@ -42,15 +41,18 @@
               Mark as Viewed
             </label>
           </td>
-
           <td><button @click="onApplicationView(application.id)">View Application</button></td>
-
-
-
           <td>{{ getFileName(application.cvFileName) }}</td>
         </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-controls">
+      <button :disabled="currentPage === 1" @click="currentPage--">Previous</button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button :disabled="currentPage === totalPages" @click="currentPage++">Next</button>
     </div>
 
   </div>
@@ -63,7 +65,9 @@ export default {
   data() {
     return {
       applications: [],
-      searchQuery: '' // Holds the search input value
+      searchQuery: '', // Holds the search input value
+      currentPage: 1,
+      rowsPerPage: 5
     };
   },
   created() {
@@ -76,6 +80,14 @@ export default {
         const fileName = this.getFileName(application.cvFileName);
         return fileName.toLowerCase().includes(this.searchQuery.toLowerCase());
       });
+    },
+    paginatedApplications() {
+      const start = (this.currentPage - 1) * this.rowsPerPage;
+      const end = start + this.rowsPerPage;
+      return this.filteredApplications.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredApplications.length / this.rowsPerPage);
     }
   },
   methods: {
@@ -114,7 +126,6 @@ export default {
           })
           .catch(error => console.error('Error downloading the CV:', error));
     },
-
     updateStatus(id, newStatus) {
       const token = localStorage.getItem("authToken");
       axios
@@ -148,7 +159,6 @@ export default {
       // Directly call `updateStatus` with 'VIEWED' status
       this.updateStatus(id, "VIEWED");
     },
-
     getFileName(filePath) {
       const indexOfUnderscore = filePath.indexOf('_', filePath.indexOf('-') + 1);
       return filePath.substring(indexOfUnderscore + 1);
@@ -173,7 +183,6 @@ export default {
   border-radius: 5px;
 }
 
-
 .table-container {
   margin-top: 20px;
   border: 1px solid #ccc;
@@ -182,11 +191,6 @@ export default {
   max-height: 80vh; /* Ensure it doesn't exceed the viewport height */
   overflow-y: auto; /* Enable vertical scrolling within the table if it overflows */
 }
-
-
-
-
-
 
 .job-table {
   width: 100%; /* Full width */
@@ -201,20 +205,20 @@ export default {
   text-align: left;
 }
 
-
 .job-table th {
   background-color: #f8f9fa;
   font-weight: bold;
   font-size: 14px;
 }
+
 .job-table tr:nth-child(even) {
   background-color: #f9f9f9; /* Add alternating row colors */
 }
 
-
 .job-table tr:hover {
   background-color: #e9ecef; /* Highlight row on hover */
 }
+
 body, html {
   height: 100%; /* Ensure the height adapts to content */
   margin: 0;
@@ -223,49 +227,15 @@ body, html {
   overflow-y: auto; /* Enable vertical scrolling */
 }
 
-
 .download-btn {
   padding: 6px 12px;
   font-size: 14px;
 }
 
-
-
-
-
-
-
-
-
 .download-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
-
-
-
-
-
-
-/* */
-.check-status-btn:hover {
-  transform: translateY(-2px);
-}
-
-.check-status-btn {
-  background-color: #3490dc;
-}
-
-
-
-
-
-
-
-
-
-
-
 
 .download-btn:active {
   transform: translateY(0);
@@ -283,9 +253,34 @@ body, html {
   text-decoration: underline;
 }
 
-
 input[type="checkbox"]:disabled {
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.pagination-controls button {
+  padding: 10px;
+  font-size: 14px;
+  background-color: #3490dc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pagination-controls button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination-controls span {
+  align-self: center;
+  font-size: 14px;
 }
 </style>

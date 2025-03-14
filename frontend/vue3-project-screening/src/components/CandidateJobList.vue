@@ -2,17 +2,12 @@
   <div class="job-list-container">
     <h2>Job List</h2>
 
-
     <input
         type="text"
         v-model="searchQuery"
         placeholder="Search job titles..."
         class="search-input"
     />
-
-
-
-
 
     <table class="job-table">
       <thead>
@@ -26,6 +21,7 @@
         <th>Education Level</th>
         <th>Required Skills</th>
         <th>Experience</th>
+        <th>Actions</th>
       </tr>
       </thead>
       <tbody>
@@ -39,21 +35,18 @@
         <td>{{ job.educationLevel }}</td>
         <td>{{ job.requiredSkills }}</td>
         <td>{{ job.minExperience }} years</td>
+        <td>
+          <input type="file" @change="handleFileUpload($event, job.id)" accept=".pdf,.doc,.docx" />
+          <button @click="applyForJob(job.id)">Apply</button>
+        </td>
       </tr>
       </tbody>
     </table>
 
-    <!-- Pagination Controls -->
     <div class="pagination-controls">
-      <button
-          class="btn btn-info"
-          :disabled="currentPage === 1"
-          @click="currentPage--">Previous</button>
+      <button :disabled="currentPage === 1" @click="currentPage--">Previous</button>
       <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button
-          class="btn btn-info"
-          :disabled="currentPage === totalPages"
-          @click="currentPage++">Next</button>
+      <button :disabled="currentPage === totalPages" @click="currentPage++">Next</button>
     </div>
 
     <router-link to="/job-application">Go to Job Application Page</router-link>
@@ -66,27 +59,33 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      jobs: [], // Array to store job data
-      currentPage: 1, // Current page
-      rowsPerPage: 5, // Jobs per page
+      jobs: [],  // Array to store job data
+      currentPage: 1,
+      rowsPerPage: 5,
       searchQuery: '',
-      errorMessage: ''
+      jobId: this.$route.params.jobId,  // Capture jobId from URL params
+      resumeFiles: {}, // Object to store the uploaded resumes for each job
     };
   },
   computed: {
-
     filteredJobs() {
-      if (!this.searchQuery) {
-        return this.jobs; // Return all jobs if there's no search query
+      let filtered = this.jobs;
+
+      if (this.jobId) {
+        // Filter jobs based on selected jobId
+        filtered = this.jobs.filter(job => job.id === Number(this.jobId));
       }
-      const query = this.searchQuery.toLowerCase();
-      return this.jobs.filter(job => job.title.toLowerCase().includes(query));
+
+      if (this.searchQuery) {
+        // Additional filtering by search query
+        filtered = filtered.filter(job => job.title.toLowerCase().includes(this.searchQuery.toLowerCase()));
+      }
+
+      return filtered;
     },
-    // Calculate total pages based on number of jobs and rows per page
     totalPages() {
-      return Math.ceil(this.jobs.length / this.rowsPerPage);
+      return Math.ceil(this.filteredJobs.length / this.rowsPerPage);
     },
-    // Get the paginated jobs based on current page and rows per page
     paginatedJobs() {
       const start = (this.currentPage - 1) * this.rowsPerPage;
       const end = start + this.rowsPerPage;
@@ -94,30 +93,56 @@ export default {
     },
   },
   methods: {
-    // Fetch jobs from the backend with authentication token
+    handleFileUpload(event, jobId) {
+      this.resumeFiles[jobId] = event.target.files[0];
+    },
     async fetchJobs() {
       try {
         const authToken = localStorage.getItem('authToken');
         const response = await axios.get('http://localhost:9090/api/jobs/all', {
-          headers: {
-            'Authorization': `Bearer ${authToken}`
-          }
+          headers: { 'Authorization': `Bearer ${authToken}` }
         });
         this.jobs = response.data;
       } catch (error) {
         console.error('Error fetching jobs:', error);
-        this.errorMessage = 'There was an error fetching the job data.';
       }
     },
+    async applyForJob(jobId) {
+      const resumeFile = this.resumeFiles[jobId];
+      if (!resumeFile) {
+        alert('Please upload your resume.');
+        return;
+      }
+
+      try {
+        const authToken = localStorage.getItem('authToken');
+        const formData = new FormData();
+        formData.append('jobId', jobId);
+        formData.append('resume', resumeFile);
+
+        await axios.post('http://localhost:9090/api/jobs/apply', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+
+        alert('Application submitted successfully!');
+      } catch (error) {
+        console.error('Error applying for job:', error);
+        if (error.response) {
+          alert(`Error: ${error.response.data}`);
+        } else {
+          alert('An error occurred while applying for the job.');
+        }
+      }
+    }
   },
   mounted() {
-    this.fetchJobs(); // Call fetchJobs when the component is mounted
-  }
+    this.fetchJobs();
+  },
 };
 </script>
-
-
-
 
 <style scoped>
 .container {
@@ -175,12 +200,6 @@ h1, h2 {
 .pagination-controls span {
   align-self: center;
 }
-
-
-
-
-
-
 
 .search-input {
   width: 100%;
