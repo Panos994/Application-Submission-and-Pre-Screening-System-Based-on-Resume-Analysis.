@@ -59,25 +59,19 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      jobs: [],  // Array to store job data
+      jobs: [],
       currentPage: 1,
       rowsPerPage: 5,
       searchQuery: '',
-      jobId: this.$route.params.jobId,  // Capture jobId from URL params
-      resumeFiles: {}, // Object to store the uploaded resumes for each job
+      jobId: this.$route.query.jobId,
+      resumeFiles: {},
     };
   },
   computed: {
     filteredJobs() {
       let filtered = this.jobs;
 
-      if (this.jobId) {
-        // Filter jobs based on selected jobId
-        filtered = this.jobs.filter(job => job.id === Number(this.jobId));
-      }
-
       if (this.searchQuery) {
-        // Additional filtering by search query
         filtered = filtered.filter(job => job.title.toLowerCase().includes(this.searchQuery.toLowerCase()));
       }
 
@@ -88,8 +82,7 @@ export default {
     },
     paginatedJobs() {
       const start = (this.currentPage - 1) * this.rowsPerPage;
-      const end = start + this.rowsPerPage;
-      return this.filteredJobs.slice(start, end);
+      return this.filteredJobs.slice(start, start + this.rowsPerPage);
     },
   },
   methods: {
@@ -103,6 +96,13 @@ export default {
           headers: { 'Authorization': `Bearer ${authToken}` }
         });
         this.jobs = response.data;
+
+        if (this.jobId) {
+          const jobIndex = this.jobs.findIndex(job => job.id === Number(this.jobId));
+          if (jobIndex !== -1) {
+            this.currentPage = Math.floor(jobIndex / this.rowsPerPage) + 1;
+          }
+        }
       } catch (error) {
         console.error('Error fetching jobs:', error);
       }

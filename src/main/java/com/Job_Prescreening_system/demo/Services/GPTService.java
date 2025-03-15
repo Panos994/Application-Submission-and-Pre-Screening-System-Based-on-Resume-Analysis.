@@ -103,7 +103,6 @@ public class GPTService {
             }
         }
 
-
         return responseWithLinks.toString();
     }
 

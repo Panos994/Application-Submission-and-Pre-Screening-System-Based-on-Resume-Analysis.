@@ -243,7 +243,6 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 /* General Layout */
 .job-application-container {
