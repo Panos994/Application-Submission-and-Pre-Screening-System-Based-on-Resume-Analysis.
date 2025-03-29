@@ -1,5 +1,6 @@
 <template>
   <div class="help-container">
+    <BackButton />
     <h1>Help Center</h1>
     <p class="intro">
       This distributed system consists of three primary roles: <b>ADMIN</b>, <b>USER</b>, and <b>MODERATOR</b>. Each role has specific responsibilities and functionalities, detailed below.
@@ -38,8 +39,10 @@
 </template>
 
 <script>
+import BackButton from "@/components/BackButton.vue";
 export default {
   name: 'InfoPage',
+  components: {BackButton},
 };
 </script>
 

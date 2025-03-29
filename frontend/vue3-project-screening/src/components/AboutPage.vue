@@ -1,5 +1,6 @@
 <template>
   <div class="about-container">
+    <BackButton />
     <h1>About This Dissertation</h1>
     <div class="content">
       <p>
@@ -20,8 +21,10 @@
 </template>
 
 <script>
+import BackButton from "@/components/BackButton.vue";
 export default {
   name: 'AboutPage',
+  components: {BackButton},
 };
 </script>
 

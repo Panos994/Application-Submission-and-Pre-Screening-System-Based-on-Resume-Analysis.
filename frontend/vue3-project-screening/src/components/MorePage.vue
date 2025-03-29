@@ -1,5 +1,6 @@
 <template>
   <div class="more-container">
+    <BackButton />
     <h1>About This Project</h1>
     <div class="details">
       <p><span class="label">Creator:</span> Panagiotis Foteinopoulos</p>
@@ -11,8 +12,11 @@
 </template>
 
 <script>
+import BackButton from "@/components/BackButton.vue";
+
 export default {
   name: 'MorePage',
+  components: {BackButton},
 };
 </script>
 
