@@ -17,7 +17,10 @@
               Status: {{ application.status }}
             </p>
           </td>
-          <td>{{ getFileName(application.cvFileName) }}</td>
+          <td>
+            {{ getFileName(application.cvFileName) }}
+            <button @click="downloadCV(application.id)" class="download-btn">Download CV</button>
+          </td>
           <td v-if="application.job">{{ application.job.title }}</td>
           <td v-else>Job information is not available</td>
         </tr>
@@ -35,8 +38,6 @@
     <router-link to="/job-application">Go to Job Application Page</router-link>
   </div>
 </template>
-
-
 
 <script>
 import axios from "axios";
@@ -104,14 +105,42 @@ export default {
       }
       return "";
     },
+
+    getDownloadLink(id) {
+      return `http://localhost:9090/api/applications/download/${id}`;
+    },
+
+    downloadCV(id) {
+      const token = localStorage.getItem('authToken');
+      fetch(this.getDownloadLink(id), {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/pdf'
+        },
+      })
+          .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.blob();
+          })
+          .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `CV_${id}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+          })
+          .catch(error => console.error('Error downloading the CV:', error));
+    },
   },
   created() {
     this.fetchApplications();
   },
 };
 </script>
-
-
 
 <style>
 /* Container for the table with fixed height and scroll */
@@ -142,6 +171,26 @@ export default {
   font-weight: bold;
 }
 
+/* Styling for the download button */
+.download-btn {
+  background-color: #4CAF50; /* Green background */
+  border: none; /* Remove borders */
+  color: white; /* White text */
+  padding: 10px 20px; /* Some padding */
+  text-align: center; /* Centered text */
+  text-decoration: none; /* Remove underline */
+  display: inline-block; /* Get the element to respect margins and paddings */
+  font-size: 14px; /* Increase font size */
+  margin: 4px 2px; /* Add some margin */
+  cursor: pointer; /* Pointer/hand icon on hover */
+  border-radius: 4px; /* Rounded corners */
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.download-btn:hover {
+  background-color: #45a049; /* Darker green */
+}
+
 /* Styling for the progress bar */
 .progress-bar {
   width: 100%;
@@ -169,8 +218,6 @@ export default {
   color: green;
   font-weight: bold;
 }
-
-
 
 .pagination {
   display: flex;
