@@ -65,6 +65,8 @@
           <ul>
             <li v-for="job in aiJobs" :key="job.id">
               <router-link :to="`/candidate-job-list/${job.id}`">{{ job.title }}</router-link>
+
+
             </li>
           </ul>
         </div>

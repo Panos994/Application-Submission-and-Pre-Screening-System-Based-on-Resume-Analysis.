@@ -30,7 +30,7 @@ import InfoPage from '@/components/InfoPage.vue';
 
 import YourApplicationsPage from '@/components/YourApplicationsPage.vue';
 
-
+import JobDetail from '@/components/JobDetail.vue'; // Import JobDetail component
 
 // Set base URL for Axios
 axios.defaults.baseURL = 'http://localhost:9090';
@@ -58,7 +58,19 @@ const routes = [
 
 
             {path: '/yourapplications', component: YourApplicationsPage},
-            {path: '/jobs', component: ModeratorJobList}
+            {path: '/jobs', component: ModeratorJobList},
+            { path: '/jobs/:id', name: 'JobDetail', component: JobDetail }, // Add JobDetail route
+
+
+
+
+
+
+
+
+
+
+
         ]
     }
 ];

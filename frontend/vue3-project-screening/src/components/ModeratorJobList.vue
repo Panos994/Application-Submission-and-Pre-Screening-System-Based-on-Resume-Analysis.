@@ -2,7 +2,9 @@
   <div class="job-list-container">
     <router-link to="/applications">Find and Download CVs through Candidates CV Files</router-link>
     <h2>Job List</h2>
+
     <router-link to="/admin">Post a New Job</router-link>
+    <button @click="exportToExcel" class="export-button">Export to Excel</button>
     <div class="table-container">
       <table class="job-table">
         <thead>
@@ -24,7 +26,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="job in jobs" :key="job.id">
+        <tr v-for="job in paginatedJobs" :key="job.id">
           <td>{{ job.title }}</td>
           <td>{{ job.location }}</td>
           <td>{{ job.sector }}</td>
@@ -43,7 +45,12 @@
         </tbody>
       </table>
     </div>
-    <button @click="exportToExcel" class="export-button">Export to Excel</button>
+    <div class="pagination-container">
+      <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+    </div>
+
   </div>
 </template>
 
@@ -51,11 +58,25 @@
 import axios from 'axios';
 
 export default {
-  name: 'JobApplication',
+  name: 'JobList',
   data() {
     return {
-      jobs: []
+      jobs: [],
+      currentPage: 1, // Current page
+      pageSize: 6 // Number of jobs per page
     };
+  },
+  computed: {
+    // Calculate total number of pages
+    totalPages() {
+      return Math.ceil(this.jobs.length / this.pageSize);
+    },
+    // Get jobs for the current page
+    paginatedJobs() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.jobs.slice(start, end);
+    }
   },
   methods: {
     async fetchJobs() {
@@ -75,6 +96,18 @@ export default {
       const authToken = localStorage.getItem('authToken');
       const url = 'http://localhost:9090/api/jobs/export';
       window.location.href = `${url}?authToken=${authToken}`;
+    },
+    // Navigate to the previous page
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+    // Navigate to the next page
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
     }
   },
   mounted() {
@@ -118,6 +151,28 @@ export default {
 
 .job-table th {
   background-color: #f8f9fa;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.pagination-container button {
+  background-color: #0073b1;
+  color: white;
+  padding: 0.5rem;
+  margin: 0 0.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pagination-container button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .export-button {

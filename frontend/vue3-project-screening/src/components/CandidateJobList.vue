@@ -26,6 +26,7 @@
       </thead>
       <tbody>
       <tr v-for="job in paginatedJobs" :key="job.id">
+        <td><router-link :to="{ name: 'JobDetail', params: { id: job.id }}">{{ job.title }}</router-link></td>
         <td>{{ job.title }}</td>
         <td>{{ job.location }}</td>
         <td>{{ job.sector }}</td>
@@ -61,7 +62,7 @@ export default {
     return {
       jobs: [],
       currentPage: 1,
-      rowsPerPage: 5,
+      rowsPerPage: 3,
       searchQuery: '',
       jobId: this.$route.query.jobId,
       resumeFiles: {},

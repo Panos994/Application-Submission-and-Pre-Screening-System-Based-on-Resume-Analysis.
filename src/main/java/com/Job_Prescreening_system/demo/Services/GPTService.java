@@ -99,7 +99,8 @@ public class GPTService {
 
         for (Job job : jobList) {
             if (topJobTitles.contains(job.getTitle())) {
-                responseWithLinks.append(String.format("<a href=\"/CandidateJobList?jobId=%d\">%s</a><br>", job.getId(), job.getTitle()));
+                // Update the link to point directly to JobDetail
+                responseWithLinks.append(String.format("<a href=\"/jobs/%d\">%s</a><br>", job.getId(), job.getTitle()));
             }
         }
 

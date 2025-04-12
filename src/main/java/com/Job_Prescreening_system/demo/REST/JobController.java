@@ -109,7 +109,7 @@ public class JobController {
 
 
     // Get a specific job by ID
-    @Secured("ROLE_MODERATOR")
+    //@Secured("ROLE_MODERATOR,ROLE_USER")
     @GetMapping("/{id}")
     public ResponseEntity<Job> getJobById(@PathVariable Long id) {
         try {
