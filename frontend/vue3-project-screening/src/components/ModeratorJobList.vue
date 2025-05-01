@@ -1,10 +1,12 @@
 <template>
   <div class="job-list-container">
-    <router-link to="/applications">Find and Download CVs through Candidates CV Files</router-link>
-    <h2>Job List</h2>
+    <!-- Navigation Links -->
+    <center><router-link to="/admin" class="back-link">Return Back to Job Post Page</router-link></center>
+    <router-link to="/applications" class="back-link">Find and Download CVs through Candidates CV Files</router-link>
 
-    <router-link to="/admin">Post a New Job</router-link>
+    <h2>Job List</h2>
     <button @click="exportToExcel" class="export-button">Export to Excel</button>
+
     <div class="table-container">
       <table class="job-table">
         <thead>
@@ -21,7 +23,7 @@
           <th>Required Skills</th>
           <th>Experience</th>
           <th>Score Weights</th>
-          <th>Highest Candidates' Scores</th>
+          <th>Highest Scores</th>
           <th>Candidates CV Files</th>
         </tr>
         </thead>
@@ -34,170 +36,174 @@
           <td>{{ job.jobLevel }}</td>
           <td>{{ job.description }}</td>
           <td>{{ job.educationLevel }}</td>
-          <td>{{ job.institutionType }}</td>
-          <td>{{ job.universityPreference }}</td>
+          <td>{{ job.institutionType || 'N/A' }}</td>
+          <td>{{ job.universityPreference || 'N/A' }}</td>
           <td>{{ job.requiredSkills }}</td>
           <td>{{ job.minExperience }} years</td>
-          <td>Experience: {{ job.minExperienceWeight }}%, Education: {{ job.educationWeight }}%, Skills: {{ job.skillsWeight }}%</td>
-          <td>Highest Score: {{ job.topMatchScore || 'N/A' }} </td>
-          <td>CV Files: {{ job.topCvFileNames || 'N/A' }} </td>
+          <td>
+            Experience: {{ job.minExperienceWeight }}%,
+            Education: {{ job.educationWeight }}%,
+            Skills: {{ job.skillsWeight }}%
+          </td>
+          <td>{{ job.topMatchScore || 'N/A' }}</td>
+          <td>{{ job.topCvFileNames || 'N/A' }}</td>
         </tr>
         </tbody>
       </table>
     </div>
-    <div class="pagination-container">
-      <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
-    </div>
 
+    <!-- Pagination Controls -->
+    <div class="pagination-controls">
+      <button :disabled="currentPage === 1" @click="currentPage--">Previous</button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button :disabled="currentPage === totalPages" @click="currentPage++">Next</button>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  name: 'JobList',
+  name: "ModeratorJobList",
   data() {
     return {
-      jobs: [],
+      jobs: [], // All jobs
       currentPage: 1, // Current page
-      pageSize: 6 // Number of jobs per page
+      rowsPerPage: 2, // Jobs per page
     };
   },
   computed: {
-    // Calculate total number of pages
-    totalPages() {
-      return Math.ceil(this.jobs.length / this.pageSize);
-    },
-    // Get jobs for the current page
+    // Paginated jobs
     paginatedJobs() {
-      const start = (this.currentPage - 1) * this.pageSize;
-      const end = start + this.pageSize;
+      const start = (this.currentPage - 1) * this.rowsPerPage;
+      const end = start + this.rowsPerPage;
       return this.jobs.slice(start, end);
-    }
+    },
+    // Total pages for pagination
+    totalPages() {
+      return Math.ceil(this.jobs.length / this.rowsPerPage);
+    },
   },
   methods: {
     async fetchJobs() {
       try {
-        const authToken = localStorage.getItem('authToken');
-        const response = await axios.get('http://localhost:9090/api/jobs/all', {
+        const authToken = localStorage.getItem("authToken");
+        const response = await axios.get("http://localhost:9090/api/jobs/all", {
           headers: {
-            'Authorization': `Bearer ${authToken}`
-          }
+            Authorization: `Bearer ${authToken}`,
+          },
         });
         this.jobs = response.data;
       } catch (error) {
-        console.error('Error fetching jobs:', error);
+        console.error("Error fetching jobs:", error);
       }
     },
     exportToExcel() {
-      const authToken = localStorage.getItem('authToken');
-      const url = 'http://localhost:9090/api/jobs/export';
+      const authToken = localStorage.getItem("authToken");
+      const url = "http://localhost:9090/api/jobs/export";
       window.location.href = `${url}?authToken=${authToken}`;
     },
-    // Navigate to the previous page
-    prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-      }
-    },
-    // Navigate to the next page
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++;
-      }
-    }
   },
   mounted() {
     this.fetchJobs();
-  }
+  },
 };
 </script>
 
 <style scoped>
+/* Align styles with ViewApplicationsCV */
 .job-list-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0 auto;
-  padding: 2rem;
-  max-width: 1200px;
-  background-color: #f3f2ef;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding: 10px 20px; /* Reduced padding to bring table higher up */
+  position: relative; /* For sticky pagination */
+}
+
+.back-link {
+  display: block;
+  margin-top: 10px; /* Reduced margin */
+  color: #3490dc;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.export-button {
+  background-color: #6cb2eb;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px; /* Reduced padding */
+  cursor: pointer;
+  margin-bottom: 10px; /* Reduced margin */
 }
 
 .table-container {
-  width: 100%;
-  max-height: 60vh; /* Adjust the max height as needed */
-  overflow-y: auto;
-  margin-top: 1rem;
+  margin-top: 10px; /* Reduced margin */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow-x: auto; /* Enable horizontal scrolling for wide tables */
+  max-height: calc(85vh - 50px); /* Prevent table from exceeding viewport height */
+  overflow-y: auto; /* Enable vertical scrolling within the table */
 }
 
 .job-table {
-  width: 100%;
+  width: 100%; /* Full width */
   border-collapse: collapse;
+  font-size: 12px; /* Smaller font size for responsiveness */
 }
 
 .job-table th,
 .job-table td {
   border: 1px solid #ccc;
-  padding: 0.5rem;
+  padding: 6px; /* Reduced padding for compactness */
   text-align: left;
 }
 
 .job-table th {
   background-color: #f8f9fa;
+  font-weight: bold;
+  font-size: 12px; /* Smaller header font size */
 }
 
-.pagination-container {
+.job-table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Add alternating row colors */
+}
+
+.job-table tr:hover {
+  background-color: #e9ecef; /* Highlight row on hover */
+}
+
+.pagination-controls {
+  position: sticky; /* Ensure pagination stays visible */
+  bottom: 0; /* Stick to the bottom of the container */
+  left: 0;
+  background-color: white; /* Keep it readable */
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 1rem 0;
+  justify-content: space-between;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  z-index: 2; /* Ensure it stays above the table */
 }
 
-.pagination-container button {
-  background-color: #0073b1;
+.pagination-controls button {
+  padding: 8px; /* Adjusted for smaller size */
+  font-size: 12px; /* Smaller font size */
+  background-color: #3490dc;
   color: white;
-  padding: 0.5rem;
-  margin: 0 0.5rem;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.pagination-container button:disabled {
+.pagination-controls button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
 
-.export-button {
-  background-color: #0073b1;
-  color: white;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
-  margin-top: 1rem;
-}
-
-.export-button:hover {
-  background-color: #005f8d;
-}
-
-@media (max-width: 600px) {
-  .job-list-container {
-    padding: 1rem;
-  }
-
-  .export-button {
-    width: 100%;
-  }
+.pagination-controls span {
+  align-self: center;
+  font-size: 12px; /* Smaller font size */
 }
 </style>

@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 import java.util.UUID;
 
+
+
 @Service
 public class MinioService {
 
@@ -64,6 +66,7 @@ public class MinioService {
 
 
     //-----
+    /*
     private static final Logger log = LoggerFactory.getLogger(MinioService.class);
     public InputStream getFile(String fileName) throws Exception {
         try {
@@ -80,6 +83,23 @@ public class MinioService {
         }
     }
 
+     */
+    private static final Logger log = LoggerFactory.getLogger(MinioService.class);
+
+    public InputStream getFile(String fileUrl) throws Exception {
+        String objectName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1); // Extract object key from URL
+        try {
+            return minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .build()
+            );
+        } catch (MinioException e) {
+            log.error("MinIO error while getting file: {}", e.getMessage());
+            throw new Exception("Error fetching file from MinIO", e);
+        }
+    }
 
 
 
@@ -108,6 +128,25 @@ public class MinioService {
         } catch (MinioException e) {
             log.error("Error generating presigned URL: {}", e.getMessage());
             throw new Exception("Could not generate presigned URL", e);
+        }
+    }
+
+
+
+    //-----
+
+    public void deleteFile(String fileUrl) throws Exception {
+        String objectName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+        try {
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .build()
+            );
+        } catch (MinioException e) {
+            log.error("Error deleting file from MinIO: {}", e.getMessage());
+            throw new Exception("Error deleting file from MinIO", e);
         }
     }
 

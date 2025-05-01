@@ -12,6 +12,7 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @Service
 public class ResumeParsingService {
@@ -20,6 +21,14 @@ public class ResumeParsingService {
 
     public String parseResume(MultipartFile resumeFile) throws IOException {
         try (PDDocument document = PDDocument.load(resumeFile.getInputStream())) {
+            PDFTextStripper stripper = new PDFTextStripper();
+            return stripper.getText(document);
+        }
+    }
+
+    // New method to parse resumes from InputStream
+    public String parseResume(InputStream inputStream) throws IOException {
+        try (PDDocument document = PDDocument.load(inputStream)) {
             PDFTextStripper stripper = new PDFTextStripper();
             return stripper.getText(document);
         }

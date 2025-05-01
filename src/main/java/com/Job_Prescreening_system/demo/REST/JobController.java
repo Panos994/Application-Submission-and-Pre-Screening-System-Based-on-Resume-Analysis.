@@ -1,6 +1,7 @@
 package com.Job_Prescreening_system.demo.REST;
 
 import com.Job_Prescreening_system.demo.Entities.Application;
+import com.Job_Prescreening_system.demo.Entities.CV;
 import com.Job_Prescreening_system.demo.Entities.Job;
 import com.Job_Prescreening_system.demo.Entities.User;
 import com.Job_Prescreening_system.demo.Repositories.UserRepository;
@@ -19,8 +20,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/jobs")
@@ -50,6 +53,9 @@ public class JobController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CVService cvService;
 
 
     // Apply for a job
@@ -104,6 +110,76 @@ public class JobController {
                     .body("Failed to submit application: " + e.getMessage());
         }
     }
+
+
+
+
+    //-- apply with stored CVs
+    @Secured("ROLE_USER")
+    @PostMapping("/apply-with-stored-cv")
+    public ResponseEntity<String> applyForJobWithStoredCV(
+            @RequestBody Map<String, Object> payload,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            Long cvId = Long.valueOf(payload.get("cvId").toString());
+            Long jobId = Long.valueOf(payload.get("jobId").toString());
+
+            System.out.println("Received cvId: " + cvId + ", jobId: " + jobId);
+
+            User user = userRepository.findByUsername(userDetails.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            CV cv = cvService.getCVById(cvId, user);
+
+            System.out.println("Fetching file from MinIO with key: " + cv.getFileUrl());
+            InputStream cvInputStream = minioService.getFile(cv.getFileUrl());
+
+            Job job = jobService.getJobById(jobId);
+            if (job == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Job not found.");
+            }
+
+            String parsedResume = resumeParsingService.parseResume(cvInputStream);
+
+            JobRequirements jobRequirements = new JobRequirements(
+                    List.of(job.getRequiredSkills().split(",")),
+                    job.getMinExperience(),
+                    job.getEducationLevel()
+            );
+
+            double matchScore = scoringService.calculateMatchScore(parsedResume, jobRequirements, job);
+
+            Application application = new Application();
+            application.setJob(job);
+            application.setMatchScore(matchScore);
+            application.setCvFileName(cv.getFileUrl());
+            application.setUser(user);
+            applicationService.saveApplication(application);
+
+            jobService.updateJobWithTopApplication(job);
+
+            return ResponseEntity.ok("Your stored CV scored: " + matchScore + " points!");
+
+        } catch (Exception e) {
+            e.printStackTrace(); // Log full stack trace for debugging
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to submit application: " + e.getMessage());
+        }
+    }
+
+
+    //----
+
+
+
+
+
+
+
+
+
+
+
 
 
 
