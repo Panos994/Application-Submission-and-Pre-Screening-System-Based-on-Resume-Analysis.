@@ -14,7 +14,7 @@
       <p><strong>Education Level:</strong> {{ job.educationLevel }}</p>
       <p><strong>Required Skills:</strong> {{ job.requiredSkills }}</p>
       <p><strong>Experience:</strong> {{ job.minExperience }} years</p>
-<br><hr>
+      <br><hr>
       <h3>Upload a New CV</h3>
       <input type="file" @change="handleFileUpload($event)" accept=".pdf,.doc,.docx" />
       <button @click="uploadCV">Upload New CV</button>
@@ -32,16 +32,21 @@
         <tr>
           <th>CV Name</th>
           <th>Actions</th>
+          <th>Date Uploaded</th>
+
         </tr>
         </thead>
         <tbody>
         <tr v-for="cv in paginatedCVs" :key="cv.id">
           <td>{{ cv.fileName }}</td>
+
           <td>
             <button @click="selectStoredCV(cv)">Use</button>
             <button @click="deleteCV(cv.id)">Delete</button>
             <button @click="downloadCV(cv.id)">Preview</button>
           </td>
+
+          <td>{{ formatDate(cv.uploadedAt) }}</td>
         </tr>
         </tbody>
       </table>
@@ -59,7 +64,7 @@ import axios from "axios";
 import BackButton from "@/components/BackButton.vue";
 
 export default {
-  components: { BackButton },
+  components: {BackButton},
   data() {
     return {
       job: {},
@@ -86,7 +91,7 @@ export default {
       try {
         const authToken = localStorage.getItem("authToken");
         const response = await axios.get(`http://localhost:9090/api/jobs/${id}`, {
-          headers: { Authorization: `Bearer ${authToken}` },
+          headers: {Authorization: `Bearer ${authToken}`},
         });
         this.job = response.data;
       } catch (error) {
@@ -97,13 +102,14 @@ export default {
       const authToken = localStorage.getItem("authToken");
       axios
           .get("http://localhost:9090/api/cvs", {
-            headers: { Authorization: `Bearer ${authToken}` },
+            headers: {Authorization: `Bearer ${authToken}`},
           })
           .then((response) => {
             this.userCVs = response.data.map((cv) => ({
               id: cv.id,
               fileName: cv.fileName,
               fileUrl: cv.fileUrl,
+              uploadedAt: cv.uploadedAt,
             }));
           })
           .catch((error) => {
@@ -143,7 +149,7 @@ export default {
       const authToken = localStorage.getItem("authToken");
       axios
           .delete(`http://localhost:9090/api/cvs/${cvId}`, {
-            headers: { Authorization: `Bearer ${authToken}` },
+            headers: {Authorization: `Bearer ${authToken}`},
           })
           .then(() => {
             alert("CV deleted successfully!");
@@ -201,7 +207,7 @@ export default {
                 cvId: this.selectedStoredCV.id,
               },
               {
-                headers: { Authorization: `Bearer ${authToken}` },
+                headers: {Authorization: `Bearer ${authToken}`},
               }
           )
           .then(() => {
@@ -236,7 +242,21 @@ export default {
             console.error("Error applying for job:", error);
           });
     },
+
+    formatDate(date) {
+        if (!date) return "N/A";
+        const d = new Date(date);
+        if (isNaN(d.getTime())) return "N/A";
+        return d.toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+    },
   },
+
   mounted() {
     this.fetchStoredCVs();
     this.fetchJobDetail();

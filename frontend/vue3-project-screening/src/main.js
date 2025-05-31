@@ -62,15 +62,6 @@ const routes = [
             { path: '/jobs/:id', name: 'JobDetail', component: JobDetail }, // Add JobDetail route
 
 
-
-
-
-
-
-
-
-
-
         ]
     }
 ];

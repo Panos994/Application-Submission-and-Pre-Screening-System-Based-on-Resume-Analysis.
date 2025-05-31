@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,13 +50,15 @@ public class CVController {
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
             List<CV> cvs = cvService.getCVsByUser(user);
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
             // Convert CV objects to a simplified structure for the frontend
             List<Map<String, String>> cvList = cvs.stream()
                     .map(cv -> Map.of(
                             "id", String.valueOf(cv.getId()),
                             "fileName", cv.getFileName(),
-                            "fileUrl", cv.getFileUrl()
+                            "fileUrl", cv.getFileUrl(),
+                            "uploadedAt", cv.getUploadedAt() != null ? cv.getUploadedAt().format(formatter) : ""
                     ))
                     .collect(Collectors.toList());
 

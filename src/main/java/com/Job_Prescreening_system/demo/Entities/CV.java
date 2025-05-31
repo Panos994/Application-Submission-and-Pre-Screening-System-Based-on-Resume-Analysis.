@@ -1,6 +1,9 @@
 package com.Job_Prescreening_system.demo.Entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="cvs")
@@ -16,6 +19,10 @@ public class CV {
 
         private String fileName; // Original file name
         private String fileUrl;  // MinIO file URL
+
+        @Column( updatable = false)
+        @CreationTimestamp
+        private LocalDateTime uploadedAt = LocalDateTime.now(); //αφου εχω το CreationTimeStamp δεν χρειαζεται το LocalDateTime.now()
 
         public Long getId() {
             return id;
@@ -47,6 +54,14 @@ public class CV {
 
         public void setFileUrl(String fileUrl) {
             this.fileUrl = fileUrl;
+        }
+
+        public LocalDateTime getUploadedAt() {
+            return uploadedAt;
+        }
+
+        public void setUploadedAt(LocalDateTime uploadedAt) {
+            this.uploadedAt = uploadedAt;
         }
 }
 
