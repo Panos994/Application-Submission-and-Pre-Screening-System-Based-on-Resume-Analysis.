@@ -11,6 +11,7 @@ This system automates **resume analysis and candidate scoring** using **Spring B
 - **Spring Boot Backend:** REST API for processing resumes  
 - **Vue3.js Frontend:** Interactive UI for job applications and score visualization  
 
+
 ## Tech Stack  
 - **Backend:** Spring Boot, Apache PDFBox, Java 
 - **Frontend:** Vue3.js  
