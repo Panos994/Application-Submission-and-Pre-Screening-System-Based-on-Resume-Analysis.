@@ -114,7 +114,7 @@ public class User {
 
 
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<Application> applications = new HashSet<>();
 
@@ -125,4 +125,11 @@ public class User {
     public void setApplications(Set<Application> applications) {
         this.applications = applications;
     }
+
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Job> jobs = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CV> cvs = new HashSet<>();
 }

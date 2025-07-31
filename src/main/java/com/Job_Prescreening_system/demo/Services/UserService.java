@@ -15,11 +15,9 @@ import java.util.stream.Collectors;
 public class UserService {
 
 
-
-
-
     @Autowired
     private UserRepository userRepository;
+
     @Transactional
     public User updateUser(Long userId, User user) {
         User existingUser = userRepository.findById(userId).orElse(null);
