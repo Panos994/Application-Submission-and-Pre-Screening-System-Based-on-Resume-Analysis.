@@ -1,5 +1,5 @@
 # Application Submission and Pre-Screening System Based on Resume Analysis  
-
+https://estia.hua.gr/browse/30780  (my graduate thesis - Department of Informatics - Harokopio University of Athens)
 ## Overview  
 This system automates **resume analysis and candidate scoring** using **Spring Boot** and **Vue3.js**. It scans resumes via **Apache PDFBox**, extracts relevant keywords, and assigns a score based on keyword matching with job requirements. Also, propose the top 3 jobs to a candidate based on his resume using Open AI's API service (AI agent - LLM) for generate responses.
 
